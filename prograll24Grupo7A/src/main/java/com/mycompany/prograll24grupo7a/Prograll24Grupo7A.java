@@ -4,10 +4,7 @@
 
 package com.mycompany.prograll24grupo7a;
 
-/**
- *
- * @author Melvin
- */
+
 public class Prograll24Grupo7A {
 
     public static void main(String[] args) {
