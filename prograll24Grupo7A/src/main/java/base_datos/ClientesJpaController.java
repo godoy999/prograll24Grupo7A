@@ -12,4 +12,6 @@ import java.io.Serializable;
  */
 public class ClientesJpaController implements Serializable {
     
+    System.out.println("hola");
+    
 }
