@@ -42,6 +42,9 @@ public class Usuarios implements Serializable {
     @Basic(optional = false)
     @Column(name = "correo", nullable = false, length = 255)
     private String correo;
+    @Basic(optional = false)
+    @Column(name = "password", nullable = false, length = 100)
+    private String password;
     @JoinColumn(name = "rol", referencedColumnName = "id_rol", nullable = false)
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Roles rol;
@@ -53,10 +56,11 @@ public class Usuarios implements Serializable {
         this.idUsuario = idUsuario;
     }
 
-    public Usuarios(Long idUsuario, String nombre, String correo) {
+    public Usuarios(Long idUsuario, String nombre, String correo, String password) {
         this.idUsuario = idUsuario;
         this.nombre = nombre;
         this.correo = correo;
+        this.password = password;
     }
 
     public Long getIdUsuario() {
@@ -81,6 +85,14 @@ public class Usuarios implements Serializable {
 
     public void setCorreo(String correo) {
         this.correo = correo;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public Roles getRol() {
