@@ -1,4 +1,4 @@
-package base_datos.exceptions;
+package test28.exceptions;
 
 import java.util.ArrayList;
 import java.util.List;

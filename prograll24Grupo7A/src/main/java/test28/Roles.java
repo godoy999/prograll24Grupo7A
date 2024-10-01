@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package base_datos;
+package test28;
 
 import java.io.Serializable;
 import java.util.List;
@@ -99,7 +99,7 @@ public class Roles implements Serializable {
 
     @Override
     public String toString() {
-        return "base_datos.Roles[ idRol=" + idRol + " ]";
+        return "test28.Roles[ idRol=" + idRol + " ]";
     }
     
 }

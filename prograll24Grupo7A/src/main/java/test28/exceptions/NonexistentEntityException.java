@@ -1,4 +1,4 @@
-package base_datos.exceptions;
+package test28.exceptions;
 
 public class NonexistentEntityException extends Exception {
     public NonexistentEntityException(String message, Throwable cause) {

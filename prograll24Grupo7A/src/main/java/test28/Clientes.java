@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package base_datos;
+package test28;
 
 import java.io.Serializable;
 import java.util.List;
@@ -25,46 +25,48 @@ import javax.persistence.UniqueConstraint;
  * @author Melvin
  */
 @Entity
-@Table(name = "Vendedores", catalog = "prograll24Grupo7A", schema = "dbo", uniqueConstraints = {
+@Table(name = "Clientes", catalog = "prograll24Grupo7A", schema = "dbo", uniqueConstraints = {
     @UniqueConstraint(columnNames = {"correo"})})
 @NamedQueries({
-    @NamedQuery(name = "Vendedores.findAll", query = "SELECT v FROM Vendedores v")})
-public class Vendedores implements Serializable {
+    @NamedQuery(name = "Clientes.findAll", query = "SELECT c FROM Clientes c")})
+public class Clientes implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "id_vendedores", nullable = false)
-    private Long idVendedores;
+    @Column(name = "id_cliente", nullable = false)
+    private Long idCliente;
     @Basic(optional = false)
     @Column(name = "nombre", nullable = false, length = 255)
     private String nombre;
     @Basic(optional = false)
     @Column(name = "correo", nullable = false, length = 255)
     private String correo;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "vendedorId", fetch = FetchType.LAZY)
-    private List<Inventario> inventarioList;
+    @Column(name = "telefono", length = 50)
+    private String telefono;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "clienteId", fetch = FetchType.LAZY)
+    private List<Factura> facturaList;
 
-    public Vendedores() {
+    public Clientes() {
     }
 
-    public Vendedores(Long idVendedores) {
-        this.idVendedores = idVendedores;
+    public Clientes(Long idCliente) {
+        this.idCliente = idCliente;
     }
 
-    public Vendedores(Long idVendedores, String nombre, String correo) {
-        this.idVendedores = idVendedores;
+    public Clientes(Long idCliente, String nombre, String correo) {
+        this.idCliente = idCliente;
         this.nombre = nombre;
         this.correo = correo;
     }
 
-    public Long getIdVendedores() {
-        return idVendedores;
+    public Long getIdCliente() {
+        return idCliente;
     }
 
-    public void setIdVendedores(Long idVendedores) {
-        this.idVendedores = idVendedores;
+    public void setIdCliente(Long idCliente) {
+        this.idCliente = idCliente;
     }
 
     public String getNombre() {
@@ -83,29 +85,37 @@ public class Vendedores implements Serializable {
         this.correo = correo;
     }
 
-    public List<Inventario> getInventarioList() {
-        return inventarioList;
+    public String getTelefono() {
+        return telefono;
     }
 
-    public void setInventarioList(List<Inventario> inventarioList) {
-        this.inventarioList = inventarioList;
+    public void setTelefono(String telefono) {
+        this.telefono = telefono;
+    }
+
+    public List<Factura> getFacturaList() {
+        return facturaList;
+    }
+
+    public void setFacturaList(List<Factura> facturaList) {
+        this.facturaList = facturaList;
     }
 
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (idVendedores != null ? idVendedores.hashCode() : 0);
+        hash += (idCliente != null ? idCliente.hashCode() : 0);
         return hash;
     }
 
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Vendedores)) {
+        if (!(object instanceof Clientes)) {
             return false;
         }
-        Vendedores other = (Vendedores) object;
-        if ((this.idVendedores == null && other.idVendedores != null) || (this.idVendedores != null && !this.idVendedores.equals(other.idVendedores))) {
+        Clientes other = (Clientes) object;
+        if ((this.idCliente == null && other.idCliente != null) || (this.idCliente != null && !this.idCliente.equals(other.idCliente))) {
             return false;
         }
         return true;
@@ -113,7 +123,7 @@ public class Vendedores implements Serializable {
 
     @Override
     public String toString() {
-        return "base_datos.Vendedores[ idVendedores=" + idVendedores + " ]";
+        return "test28.Clientes[ idCliente=" + idCliente + " ]";
     }
     
 }

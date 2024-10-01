@@ -2,18 +2,20 @@
 <persistence version="2.2" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence           http://xmlns.jcp.org/xml/ns/persistence/persistence_2_2.xsd">
   <persistence-unit name="com.mycompany_prograll24Grupo7A_jar_1.0-SNAPSHOTPU" transaction-type="RESOURCE_LOCAL">
     <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
-    <class>base_datos.Factura</class>
-    <class>base_datos.Ventas</class>
-    <class>base_datos.Roles</class>
-    <class>base_datos.Usuarios</class>
-    <class>base_datos.Inventario</class>
-    <class>base_datos.Clientes</class>
-    <class>base_datos.Vendedores</class>
+    <class>test28.Sysdiagrams</class>
+    <class>test28.Clientes</class>
+    <class>test28.Factura</class>
+    <class>test28.Ventas</class>
+    <class>test28.Usuarios</class>
+    <class>test28.Inventario</class>
+    <class>test28.Roles</class>
+    <class>test28.Vendedores</class>
     <properties>
-      <property name="javax.persistence.jdbc.url" value="jdbc:sqlserver://localhost:1433;databaseName=prograll24Grupo7A"/>
+      <property name="javax.persistence.jdbc.url" value="jdbc:sqlserver://localhost:1433;databaseName=prograll24Grupo7A;sslProtocol=TLSv1.2;trustServerCertificate=true"/>
       <property name="javax.persistence.jdbc.user" value="sa"/>
       <property name="javax.persistence.jdbc.driver" value="com.microsoft.sqlserver.jdbc.SQLServerDriver"/>
       <property name="javax.persistence.jdbc.password" value="Admin2024"/>
+      
     </properties>
   </persistence-unit>
 </persistence>

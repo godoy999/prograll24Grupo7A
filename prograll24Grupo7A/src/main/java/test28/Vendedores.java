@@ -2,20 +2,21 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package base_datos;
+package test28;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
@@ -24,47 +25,46 @@ import javax.persistence.UniqueConstraint;
  * @author Melvin
  */
 @Entity
-@Table(name = "Usuarios", catalog = "prograll24Grupo7A", schema = "dbo", uniqueConstraints = {
+@Table(name = "Vendedores", catalog = "prograll24Grupo7A", schema = "dbo", uniqueConstraints = {
     @UniqueConstraint(columnNames = {"correo"})})
 @NamedQueries({
-    @NamedQuery(name = "Usuarios.findAll", query = "SELECT u FROM Usuarios u")})
-public class Usuarios implements Serializable {
+    @NamedQuery(name = "Vendedores.findAll", query = "SELECT v FROM Vendedores v")})
+public class Vendedores implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "id_usuario", nullable = false)
-    private Long idUsuario;
+    @Column(name = "id_vendedores", nullable = false)
+    private Long idVendedores;
     @Basic(optional = false)
     @Column(name = "nombre", nullable = false, length = 255)
     private String nombre;
     @Basic(optional = false)
     @Column(name = "correo", nullable = false, length = 255)
     private String correo;
-    @JoinColumn(name = "rol", referencedColumnName = "id_rol", nullable = false)
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private Roles rol;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "vendedorId", fetch = FetchType.LAZY)
+    private List<Inventario> inventarioList;
 
-    public Usuarios() {
+    public Vendedores() {
     }
 
-    public Usuarios(Long idUsuario) {
-        this.idUsuario = idUsuario;
+    public Vendedores(Long idVendedores) {
+        this.idVendedores = idVendedores;
     }
 
-    public Usuarios(Long idUsuario, String nombre, String correo) {
-        this.idUsuario = idUsuario;
+    public Vendedores(Long idVendedores, String nombre, String correo) {
+        this.idVendedores = idVendedores;
         this.nombre = nombre;
         this.correo = correo;
     }
 
-    public Long getIdUsuario() {
-        return idUsuario;
+    public Long getIdVendedores() {
+        return idVendedores;
     }
 
-    public void setIdUsuario(Long idUsuario) {
-        this.idUsuario = idUsuario;
+    public void setIdVendedores(Long idVendedores) {
+        this.idVendedores = idVendedores;
     }
 
     public String getNombre() {
@@ -83,29 +83,29 @@ public class Usuarios implements Serializable {
         this.correo = correo;
     }
 
-    public Roles getRol() {
-        return rol;
+    public List<Inventario> getInventarioList() {
+        return inventarioList;
     }
 
-    public void setRol(Roles rol) {
-        this.rol = rol;
+    public void setInventarioList(List<Inventario> inventarioList) {
+        this.inventarioList = inventarioList;
     }
 
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (idUsuario != null ? idUsuario.hashCode() : 0);
+        hash += (idVendedores != null ? idVendedores.hashCode() : 0);
         return hash;
     }
 
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Usuarios)) {
+        if (!(object instanceof Vendedores)) {
             return false;
         }
-        Usuarios other = (Usuarios) object;
-        if ((this.idUsuario == null && other.idUsuario != null) || (this.idUsuario != null && !this.idUsuario.equals(other.idUsuario))) {
+        Vendedores other = (Vendedores) object;
+        if ((this.idVendedores == null && other.idVendedores != null) || (this.idVendedores != null && !this.idVendedores.equals(other.idVendedores))) {
             return false;
         }
         return true;
@@ -113,7 +113,7 @@ public class Usuarios implements Serializable {
 
     @Override
     public String toString() {
-        return "base_datos.Usuarios[ idUsuario=" + idUsuario + " ]";
+        return "test28.Vendedores[ idVendedores=" + idVendedores + " ]";
     }
     
 }

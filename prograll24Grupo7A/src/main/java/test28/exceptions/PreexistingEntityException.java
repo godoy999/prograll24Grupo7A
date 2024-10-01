@@ -1,4 +1,4 @@
-package base_datos.exceptions;
+package test28.exceptions;
 
 public class PreexistingEntityException extends Exception {
     public PreexistingEntityException(String message, Throwable cause) {
