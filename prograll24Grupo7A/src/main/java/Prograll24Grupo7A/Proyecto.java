@@ -31,7 +31,7 @@ import test28.VentasJpaController;
  * @author Melvin
  */
 public class Proyecto {
-
+static Scanner entrada = new Scanner(System.in);
     public static void main(String[] args) {
         
         //create_ventas();
@@ -41,6 +41,10 @@ public class Proyecto {
         //create_inventario();
         create_factura();
         //create_cliente();
+        
+        
+        
+        
 
     }
 
@@ -52,7 +56,7 @@ public class Proyecto {
         } else {
             System.out.println("EntityManagerFactory es nula.");
         }
-        Scanner entrada = new Scanner(System.in);
+        
         Clientes a = new Clientes();
 
         System.out.println("Ingrese su nombre");
@@ -83,7 +87,7 @@ public class Proyecto {
     public static void create_factura() {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.mycompany_prograll24Grupo7A_jar_1.0-SNAPSHOTPU");
         EntityManager em = emf.createEntityManager();
-        Scanner scanner = new Scanner(System.in);
+        
 
         FacturaJpaController facturaController = new FacturaJpaController();
         boolean estado = true;
@@ -95,20 +99,20 @@ public class Proyecto {
             System.out.println("4. Eliminar factura");
             System.out.println("5. Salir");
             System.out.print("Selecciona una opción: ");
-            int opcion = scanner.nextInt();
+            int opcion = entrada.nextInt();
 
             switch (opcion) {
                 case 1:
                     // Crear nueva factura
                     System.out.print("Ingrese el ID del cliente: ");
-                    Long clienteId = scanner.nextLong();
+                    Long clienteId = entrada.nextLong();
 
                     System.out.print("Ingrese la fecha de la factura (YYYY-MM-DD): ");
-                    String fechaStr = scanner.next();
+                    String fechaStr = entrada.next();
                     Date fecha = java.sql.Date.valueOf(fechaStr);
 
                     System.out.print("Ingrese el monto total: ");
-                    BigDecimal montoTotal = scanner.nextBigDecimal();
+                    BigDecimal montoTotal = entrada.nextBigDecimal();
 
                     Factura nuevaFactura = new Factura();
                     nuevaFactura.setFecha(fecha);
@@ -130,7 +134,7 @@ public class Proyecto {
                 case 2:
                     // Buscar factura por ID
                     System.out.print("Ingrese el ID de la factura: ");
-                    Long idFactura = scanner.nextLong();
+                    Long idFactura = entrada.nextLong();
 
                     Factura factura = facturaController.findFactura(idFactura);
                     if (factura != null) {
@@ -143,12 +147,12 @@ public class Proyecto {
                 case 3:
                     // Editar factura
                     System.out.print("Ingrese el ID de la factura a editar: ");
-                    Long idFacturaEditar = scanner.nextLong();
+                    Long idFacturaEditar = entrada.nextLong();
 
                     Factura facturaAEditar = facturaController.findFactura(idFacturaEditar);
                     if (facturaAEditar != null) {
                         System.out.print("Ingrese el nuevo monto total: ");
-                        BigDecimal nuevoMontoTotal = scanner.nextBigDecimal();
+                        BigDecimal nuevoMontoTotal = entrada.nextBigDecimal();
                         facturaAEditar.setMontoTotal(nuevoMontoTotal);
 
                         try {
@@ -165,7 +169,7 @@ public class Proyecto {
                 case 4:
                     // Eliminar factura
                     System.out.print("Ingrese el ID de la factura a eliminar: ");
-                    Long idFacturaEliminar = scanner.nextLong();
+                    Long idFacturaEliminar = entrada.nextLong();
 
                     try {
                         facturaController.delete(idFacturaEliminar);
@@ -192,19 +196,17 @@ public class Proyecto {
         EntityManager em = emf.createEntityManager();
         InventarioJpaController inventarioController = new InventarioJpaController();
 
-        Scanner scanner = new Scanner(System.in);
-
         try {
             // Ingresar los datos para el nuevo producto
             System.out.println("Ingrese el nombre del producto:");
-            String nombreProducto = scanner.nextLine();
+            String nombreProducto = entrada.nextLine();
 
             System.out.println("Ingrese la cantidad:");
-            int cantidad = scanner.nextInt();
+            int cantidad = entrada.nextInt();
 
             // Nota: Aquí deberías tener un método para validar y obtener un vendedorId existente
             System.out.println("Ingrese el ID del vendedor:");
-            Long vendedorId = scanner.nextLong();
+            Long vendedorId = entrada.nextLong();
 
             // Iniciar transacción para guardar el nuevo inventario
             em.getTransaction().begin();
@@ -235,7 +237,7 @@ public class Proyecto {
         } finally {
             em.close();
             emf.close();
-            scanner.close();
+            entrada.close();
         }
     }
 
@@ -245,8 +247,6 @@ public class Proyecto {
         // Instanciar el controlador de Roles
         RolesJpaController rolesController = new RolesJpaController(emf);
 
-        // Escáner para leer la entrada del usuario
-        Scanner scanner = new Scanner(System.in);
 
         // Menú del CRUD
         boolean salir = false;
@@ -255,14 +255,14 @@ public class Proyecto {
             System.out.println("1. Crear Rol");
             System.out.println("2. Salir");
             System.out.print("Seleccione una opción: ");
-            int opcion = scanner.nextInt();
-            scanner.nextLine(); // Consumir la nueva línea
+            int opcion = entrada.nextInt();
+            entrada.nextLine(); // Consumir la nueva línea
 
             switch (opcion) {
                 case 1:
                     // Crear Rol (Create)
                     System.out.println("Ingrese el nombre del nuevo rol:");
-                    String nombre = scanner.nextLine();
+                    String nombre = entrada.nextLine();
 
                     // Crear la instancia del objeto Roles
                     Roles nuevoRol = new Roles();
@@ -286,7 +286,7 @@ public class Proyecto {
 
         // Cerrar el EntityManagerFactory
         emf.close();
-        scanner.close();
+        entrada.close();
     }
 
     public static void create_usuario() {
@@ -294,21 +294,18 @@ public class Proyecto {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.mycompany_prograll24Grupo7A_jar_1.0-SNAPSHOTPU");
         UsuariosJpaController usuarioController = new UsuariosJpaController(emf);
 
-        // Crear el Scanner para obtener datos del usuario
-        Scanner scanner = new Scanner(System.in);
-
         // Pedir al usuario que ingrese los datos
         System.out.println("Ingrese el nombre del usuario:");
-        String nombre = scanner.nextLine();
+        String nombre = entrada.nextLine();
 
         System.out.println("Ingrese el correo del usuario:");
-        String correo = scanner.nextLine();
+        String correo = entrada.nextLine();
 
         System.out.println("Ingrese la contraseña del usuario:");
-        String password = scanner.nextLine();
+        String password = entrada.nextLine();
 
         System.out.println("Ingrese el ID del rol:");
-        Long rolId = scanner.nextLong();
+        Long rolId = entrada.nextLong();
 
         // Crear el nuevo usuario
         Usuarios nuevoUsuario = new Usuarios();
@@ -331,7 +328,7 @@ public class Proyecto {
         } finally {
             // Cerrar EntityManagerFactory
             emf.close();
-            scanner.close();
+            entrada.close();
         }
 
     }
@@ -339,7 +336,7 @@ public class Proyecto {
     public static void create_vendedores() {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.mycompany_prograll24Grupo7A_jar_1.0-SNAPSHOTPU");
         VendedoresJpaController vendedoresController = new VendedoresJpaController();
-        Scanner scanner = new Scanner(System.in);
+       
 
         // Menú de opciones
         boolean salir = false;
@@ -351,16 +348,16 @@ public class Proyecto {
             System.out.println("4. Eliminar Vendedor");
             System.out.println("5. Salir");
             System.out.print("Selecciona una opción: ");
-            int opcion = scanner.nextInt();
-            scanner.nextLine();  // Consumir el salto de línea
+            int opcion = entrada.nextInt();
+            entrada.nextLine();  // Consumir el salto de línea
 
             switch (opcion) {
                 case 1:
                     // Crear nuevo Vendedor
                     System.out.print("Introduce el nombre del vendedor: ");
-                    String nombre = scanner.nextLine();
+                    String nombre = entrada.nextLine();
                     System.out.print("Introduce el correo del vendedor: ");
-                    String correo = scanner.nextLine();
+                    String correo = entrada.nextLine();
 
                     Vendedores nuevoVendedor = new Vendedores();
                     nuevoVendedor.setNombre(nombre);
@@ -383,15 +380,15 @@ public class Proyecto {
                 case 3:
                     // Actualizar un vendedor existente
                     System.out.print("Introduce el ID del vendedor que deseas actualizar: ");
-                    Long idUpdate = scanner.nextLong();
-                    scanner.nextLine();  // Consumir el salto de línea
+                    Long idUpdate = entrada.nextLong();
+                    entrada.nextLine();  // Consumir el salto de línea
                     Vendedores vendedorActualizar = vendedoresController.findVendedor(idUpdate);
 
                     if (vendedorActualizar != null) {
                         System.out.print("Nuevo nombre: ");
-                        String nuevoNombre = scanner.nextLine();
+                        String nuevoNombre = entrada.nextLine();
                         System.out.print("Nuevo correo: ");
-                        String nuevoCorreo = scanner.nextLine();
+                        String nuevoCorreo = entrada.nextLine();
 
                         vendedorActualizar.setNombre(nuevoNombre);
                         vendedorActualizar.setCorreo(nuevoCorreo);
@@ -410,8 +407,8 @@ public class Proyecto {
                 case 4:
                     // Eliminar un vendedor
                     System.out.print("Introduce el ID del vendedor que deseas eliminar: ");
-                    Long idDelete = scanner.nextLong();
-                    scanner.nextLine();  // Consumir el salto de línea
+                    Long idDelete = entrada.nextLong();
+                    entrada.nextLine();  // Consumir el salto de línea
 
                     try {
                         vendedoresController.destroy(idDelete);
@@ -432,7 +429,7 @@ public class Proyecto {
             }
         }
 
-        scanner.close();
+        entrada.close();
     }
 
     public static void create_ventas() {
@@ -440,24 +437,20 @@ public class Proyecto {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.mycompany_prograll24Grupo7A_jar_1.0-SNAPSHOTPU");
         VentasJpaController ventasController = new VentasJpaController(emf);
 
-        // Crear un Scanner para obtener los datos del usuario
-        Scanner scanner = new Scanner(System.in);
-
         // Solicitar los datos al usuario
         System.out.println("Creación de una nueva venta");
 
         System.out.print("Ingrese la cantidad: ");
-        int cantidad = scanner.nextInt();
+        int cantidad = entrada.nextInt();
 
         System.out.print("Ingrese el precio: ");
-        BigDecimal precio = scanner.nextBigDecimal();
+        BigDecimal precio = entrada.nextBigDecimal();
 
-        // Aquí asumiré que tienes una tabla de Factura e Inventario y que necesitas obtener IDs válidos
         System.out.print("Ingrese el ID de la factura: ");
-        Long facturaId = scanner.nextLong();
+        Long facturaId = entrada.nextLong();
 
         System.out.print("Ingrese el ID del producto (Inventario): ");
-        Long productoId = scanner.nextLong();
+        Long productoId = entrada.nextLong();
 
         // Crear una instancia de Ventas con los datos ingresados
         Ventas nuevaVenta = new Ventas();
