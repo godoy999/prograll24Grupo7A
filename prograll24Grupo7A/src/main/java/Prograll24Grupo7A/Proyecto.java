@@ -26,41 +26,86 @@ import test28.VendedoresJpaController;
 import test28.Ventas;
 import test28.VentasJpaController;
 
-/**
- *
- * @author Melvin
- */
 public class Proyecto {
-static Scanner entrada = new Scanner(System.in);
+
+    static Scanner entrada = new Scanner(System.in);
+    static boolean estado = true;
+
     public static void main(String[] args) {
-        
-        //create_ventas();
-       // create_vendedores();
-       // create_usuario();
+
+        // create_usuario();
         //create_rol();
-        //create_inventario();
-        create_factura();
-        //create_cliente();
         
-        
-        
-        
+
+        do {
+            try {
+                System.out.println("-------------------------------------------");
+                System.out.println("Bienvenido a nuestra Empresa de tecnologia ");
+                System.out.println("1. Desea agregar un producto al inventario ");
+                System.out.println("2. Desea agregar un vendedor o actualizarlo ");
+                System.out.println("3. Desea ingresar una venta o consultarla ");
+                System.out.println("4. Desea Hacer un CRUD a cliente ");
+                System.out.println("5. Desea Generar la factura ");
+                System.out.println("6. Salir ");
+                System.out.println("Que opcion desea: ");
+                System.out.println("-------------------------------------------");
+                int r = entrada.nextInt();
+
+                switch (r) {
+                    case 1:
+                        create_inventario();
+                        estado = true;
+                        break;
+                    case 2:
+                        create_vendedores();
+                        estado = true;
+                        break;
+
+                    case 3:
+                        create_ventas();
+                        estado = true;
+                        break;
+                    case 4:
+                        create_cliente();
+                        estado = true;
+                        break;
+                    case 5:
+                        create_factura();
+                        estado = true;
+                        break;
+                    case 6:
+                        System.out.println("Que tengas un Feliz Dia!!");
+                        estado = false;
+                        break;
+                    default:
+
+                        System.out.println("La opcion escogida no es valida!!!!!!");
+                        System.out.println("Intentelo de nuevo ");
+                        estado = true;
+                        break;
+                }
+
+            } catch (Exception e) {
+                System.out.println("Ha ocurrido una excepcion, intentalo de nuevo!!");
+                entrada.nextLine();
+                estado = true;
+            } finally {
+
+            }
+
+        } while (estado);
 
     }
 
     public static void create_cliente() {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.mycompany_prograll24Grupo7A_jar_1.0-SNAPSHOTPU");
         EntityManager em = emf.createEntityManager();
-        if (emf != null) {
-            System.out.println("EntityManagerFactory creada correctamente.");
-        } else {
-            System.out.println("EntityManagerFactory es nula.");
-        }
-        
+
         Clientes a = new Clientes();
 
         System.out.println("Ingrese su nombre");
         String nombre = entrada.nextLine();
+        entrada.nextLine();
         a.setNombre(nombre);
 
         System.out.println("Ingrese su correo");
@@ -87,7 +132,6 @@ static Scanner entrada = new Scanner(System.in);
     public static void create_factura() {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.mycompany_prograll24Grupo7A_jar_1.0-SNAPSHOTPU");
         EntityManager em = emf.createEntityManager();
-        
 
         FacturaJpaController facturaController = new FacturaJpaController();
         boolean estado = true;
@@ -200,6 +244,7 @@ static Scanner entrada = new Scanner(System.in);
             // Ingresar los datos para el nuevo producto
             System.out.println("Ingrese el nombre del producto:");
             String nombreProducto = entrada.nextLine();
+            entrada.nextLine();
 
             System.out.println("Ingrese la cantidad:");
             int cantidad = entrada.nextInt();
@@ -246,7 +291,6 @@ static Scanner entrada = new Scanner(System.in);
 
         // Instanciar el controlador de Roles
         RolesJpaController rolesController = new RolesJpaController(emf);
-
 
         // Menú del CRUD
         boolean salir = false;
@@ -297,12 +341,14 @@ static Scanner entrada = new Scanner(System.in);
         // Pedir al usuario que ingrese los datos
         System.out.println("Ingrese el nombre del usuario:");
         String nombre = entrada.nextLine();
+        entrada.nextLine();
 
         System.out.println("Ingrese el correo del usuario:");
         String correo = entrada.nextLine();
 
         System.out.println("Ingrese la contraseña del usuario:");
         String password = entrada.nextLine();
+        entrada.nextLine();
 
         System.out.println("Ingrese el ID del rol:");
         Long rolId = entrada.nextLong();
@@ -336,7 +382,6 @@ static Scanner entrada = new Scanner(System.in);
     public static void create_vendedores() {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.mycompany_prograll24Grupo7A_jar_1.0-SNAPSHOTPU");
         VendedoresJpaController vendedoresController = new VendedoresJpaController();
-       
 
         // Menú de opciones
         boolean salir = false;
@@ -356,6 +401,7 @@ static Scanner entrada = new Scanner(System.in);
                     // Crear nuevo Vendedor
                     System.out.print("Introduce el nombre del vendedor: ");
                     String nombre = entrada.nextLine();
+                    entrada.nextLine();
                     System.out.print("Introduce el correo del vendedor: ");
                     String correo = entrada.nextLine();
 
@@ -433,7 +479,7 @@ static Scanner entrada = new Scanner(System.in);
     }
 
     public static void create_ventas() {
-        // Crear el EntityManagerFactory (utiliza el nombre correcto de tu persistence unit)
+        // Crear el EntityManagerFactory 
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.mycompany_prograll24Grupo7A_jar_1.0-SNAPSHOTPU");
         VentasJpaController ventasController = new VentasJpaController(emf);
 
@@ -442,12 +488,14 @@ static Scanner entrada = new Scanner(System.in);
 
         System.out.print("Ingrese la cantidad: ");
         int cantidad = entrada.nextInt();
+        entrada.nextLine();
 
         System.out.print("Ingrese el precio: ");
         BigDecimal precio = entrada.nextBigDecimal();
 
         System.out.print("Ingrese el ID de la factura: ");
         Long facturaId = entrada.nextLong();
+        entrada.nextLine();
 
         System.out.print("Ingrese el ID del producto (Inventario): ");
         Long productoId = entrada.nextLong();
