@@ -39,8 +39,10 @@ public class Proyecto {
 
         // create_usuario();
         //create_rol();
-        
-
+         Scanner scanner = new Scanner(System.in);
+        ClientesJpaController clientesController = new ClientesJpaController();
+        InventarioJpaController inventarioController = new InventarioJpaController();
+        int opcion = 0;
         do {
             try {
                 String menu = "-------------------------------------------\n"
@@ -66,9 +68,45 @@ public class Proyecto {
 
                 switch (r) {
                     case 1:
-                        create_inventario();
+                        int opcionInventario = 0;
+                    {
+                       
+                        do {
+                            System.out.println("Seleccione una opción:");
+                            System.out.println("1. Crear Inventario");
+                            System.out.println("2. Leer Inventario");
+                            System.out.println("3. Actualizar Inventario");
+                            System.out.println("4. Eliminar Inventario");
+                            System.out.println("5. Salir");
+                            
+                            opcionInventario = scanner.nextInt();
+                            
+                            switch (opcionInventario) {
+                                case 1:
+                                    create_inventario();
+                                    break;
+                                case 2:
+                                    leerInventario(inventarioController);
+                                    break;
+                                case 3:
+                                    actualizarInventario(scanner, inventarioController);
+                                    break;
+                                case 4:
+                                    eliminarInventario(scanner, inventarioController);
+                                    break;
+                                case 5:
+                                    inventarioController.close();
+                                    System.out.println("Saliendo...");
+                                    break;
+                                default:
+                                    System.out.println("Opción no válida. Intente de nuevo.");
+                            }
+                        } while (opcion != 5);
+                    }
+                    
                         estado = true;
                         break;
+
                     case 2:
                         create_vendedores();
                         estado = true;
@@ -135,6 +173,8 @@ public class Proyecto {
 
     }
 
+//------------------------------------------------CRUD CLIENTES------------------------------------------------------------    
+    
     static void insertar_clientes(){
 
         String persistenceUnitname =null;
@@ -243,6 +283,7 @@ public class Proyecto {
             em.close();
         }
     }
+    
   static void eliminar_cliente() {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.mycompany_prograll24Grupo7A_jar_1.0-SNAPSHOTPU");
         ClientesJpaController ac = new ClientesJpaController(emf);
@@ -250,25 +291,27 @@ public class Proyecto {
         Scanner scanner = new Scanner(System.in);
 
         System.out.println("Ingrese el ID del cliente que desea eliminar:");
-        Long idCliente = scanner.nextLong();
+        Long idClientes = scanner.nextLong();
 
         // Buscar el cliente para eliminar
-        Clientes cliente = ac.findClientes(idCliente);
-        if (cliente == null) {
+        Clientes clientes = ac.findClientes(idClientes);
+        if (clientes == null) {
             System.out.println("Cliente no encontrado.");
             return;
         }
 
         // Eliminar el cliente
         try {
-            ac.destroy(idCliente);
+            ac.destroy(idClientes);
             System.out.println("Cliente eliminado con éxito.");
         } catch (Exception e) {
             System.out.println("Error al eliminar el cliente.");
             e.printStackTrace();
         }
     }            
-            
+   
+//---------------------------------------------------CRUD FACTURA------------------------------------------------------------------  
+  
     public static void create_factura() {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.mycompany_prograll24Grupo7A_jar_1.0-SNAPSHOTPU");
         EntityManager em = emf.createEntityManager();
@@ -381,6 +424,8 @@ public class Proyecto {
         }
     }
 
+    //-----------------------------------------CRUD INVENTARIO------------------------------------------------------------------
+    
     public static void create_inventario() {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.mycompany_prograll24Grupo7A_jar_1.0-SNAPSHOTPU");
         EntityManager em = emf.createEntityManager();
@@ -431,7 +476,80 @@ public class Proyecto {
             entrada.close();
         }
     }
+    
+        private static void leerInventario(InventarioJpaController inventarioController) {
+        List<Inventario> inventarios = inventarioController.findInventarioEntities();
+        if (inventarios.isEmpty()) {
+            System.out.println("No hay inventarios disponibles.");
+        } else {
+            System.out.println("Inventarios:");
+            for (Inventario inventario : inventarios) {
+                System.out.println("ID: " + inventario.getIdInventario() + ", Nombre: " + inventario.getNombreProducto() + 
+                                   ", Cantidad: " + inventario.getCantidad());
+            }
+        }
+    }
 
+    private static void actualizarInventario(Scanner scanner, InventarioJpaController inventarioController) {
+        System.out.println("Ingrese el ID del inventario a actualizar:");
+        Long id = scanner.nextLong();
+        Inventario inventario = inventarioController.findInventario(id);
+
+        if (inventario == null) {
+            System.out.println("Inventario no encontrado.");
+            return;
+        }
+
+        System.out.println("Nombre actual: " + inventario.getNombreProducto());
+        System.out.println("Ingrese el nuevo nombre del producto (deje vacío para no cambiar):");
+        scanner.nextLine(); // Consumir la nueva línea
+        String nuevoNombre = scanner.nextLine();
+        if (!nuevoNombre.isEmpty()) {
+            inventario.setNombreProducto(nuevoNombre);
+        }
+
+        System.out.println("Cantidad actual: " + inventario.getCantidad());
+        System.out.println("Ingrese la nueva cantidad (deje vacío para no cambiar):");
+        String nuevaCantidadStr = scanner.nextLine();
+        if (!nuevaCantidadStr.isEmpty()) {
+            inventario.setCantidad(Integer.parseInt(nuevaCantidadStr));
+        }
+
+        try {
+            inventarioController.edit(inventario);
+            System.out.println("Inventario actualizado con éxito.");
+        } catch (Exception e) {
+            System.out.println("Error al actualizar inventario: " + e.getMessage());
+        }
+    }
+
+private static void eliminarInventario(Scanner scanner, InventarioJpaController inventarioController) {
+    System.out.println("Ingrese el ID del inventario a eliminar:");
+
+    // Asegurarse de que el ID se lea correctamente
+    Long idInventario = null;
+    try {
+        // Leer la siguiente línea y convertirla en un número Long
+        String input = scanner.nextLine().trim(); // Eliminar espacios innecesarios
+        idInventario = Long.parseLong(input);
+    } catch (NumberFormatException e) {
+        System.out.println("Error: ID inválido. Debe ser un número.");
+        return;
+    }
+
+    // Intentar eliminar el inventario con el ID ingresado
+    try {
+        inventarioController.destroy(idInventario);
+        System.out.println("Inventario eliminado con éxito.");
+    } catch (Exception e) {
+        System.out.println("Error al eliminar inventario: " + e.getMessage());
+    }
+}
+
+
+
+//----------------------------------------------------CRUD ROL------------------------------------------------------------------------    
+    
     public static void create_rol() {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.mycompany_prograll24Grupo7A_jar_1.0-SNAPSHOTPU");
 
@@ -478,6 +596,8 @@ public class Proyecto {
         emf.close();
         entrada.close();
     }
+    
+//-----------------------------------------------CRUD USUARIO---------------------------------------------------------------------    
 
     public static void create_usuario() {
         // Crear el EntityManagerFactory (nombre del persistence unit en persistence.xml)
@@ -525,6 +645,8 @@ public class Proyecto {
 
     }
 
+//-----------------------------------------------------------------CRUD VENDEDORES---------------------------------------------------    
+    
     public static void create_vendedores() {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.mycompany_prograll24Grupo7A_jar_1.0-SNAPSHOTPU");
         VendedoresJpaController vendedoresController = new VendedoresJpaController();
@@ -624,6 +746,8 @@ public class Proyecto {
         entrada.close();
     }
 
+//-----------------------------------------------------CRUD VENTAS-----------------------------------------------------------------    
+    
     public static void create_ventas() {
         // Crear el EntityManagerFactory 
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.mycompany_prograll24Grupo7A_jar_1.0-SNAPSHOTPU");

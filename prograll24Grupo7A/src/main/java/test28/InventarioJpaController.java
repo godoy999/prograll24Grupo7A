@@ -11,7 +11,7 @@ import javax.persistence.TypedQuery;
 import java.util.List;
 
 public class InventarioJpaController {
-
+    
     private EntityManagerFactory emf;
 
     public InventarioJpaController() {
@@ -38,6 +38,56 @@ public class InventarioJpaController {
         EntityManager em = getEntityManager();
         try {
             return em.find(Inventario.class, id);
+        } finally {
+            em.close();
+        }
+    }
+
+    // Método para crear un nuevo inventario
+    public void create(Inventario inventario) throws Exception {
+        EntityManager em = getEntityManager();
+        try {
+            em.getTransaction().begin();
+            em.persist(inventario);
+            em.getTransaction().commit();
+        } catch (Exception ex) {
+            if (findInventario(inventario.getIdInventario()) != null) {
+                throw new Exception("El inventario con id " + inventario.getIdInventario() + " ya existe.");
+            }
+            throw ex;
+        } finally {
+            em.close();
+        }
+    }
+
+    // Método para actualizar un inventario
+    public void edit(Inventario inventario) throws Exception {
+        EntityManager em = getEntityManager();
+        try {
+            em.getTransaction().begin();
+            em.merge(inventario);
+            em.getTransaction().commit();
+        } catch (Exception ex) {
+            if (findInventario(inventario.getIdInventario()) == null) {
+                throw new Exception("El inventario con id " + inventario.getIdInventario() + " no existe.");
+            }
+            throw ex;
+        } finally {
+            em.close();
+        }
+    }
+
+    // Método para eliminar un inventario
+    public void destroy(Long id) throws Exception {
+        EntityManager em = getEntityManager();
+        try {
+            em.getTransaction().begin();
+            Inventario inventario = em.getReference(Inventario.class, id);
+            if (inventario == null) {
+                throw new Exception("El inventario con id " + id + " no existe.");
+            }
+            em.remove(inventario);
+            em.getTransaction().commit();
         } finally {
             em.close();
         }
