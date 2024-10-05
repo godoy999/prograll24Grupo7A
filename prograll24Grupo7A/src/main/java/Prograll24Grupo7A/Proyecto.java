@@ -5,15 +5,18 @@
 package Prograll24Grupo7A;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import java.util.Scanner;
+import javax.persistence.EntityNotFoundException;
 import javax.persistence.EntityTransaction;
 import javax.swing.JOptionPane;
 import test28.Clientes;
+import test28.ClientesJpaController;
 import test28.Factura;
 import test28.FacturaJpaController;
 import test28.Inventario;
@@ -76,8 +79,37 @@ public class Proyecto {
                         estado = true;
                         break;
                     case 4:
-                        create_cliente();
-                        estado = true;
+                          int opcionClientes = 0;
+                    do {
+                        System.out.println("Seleccione una opción para Clientes:");
+                        System.out.println("1. Crear Cliente");
+                        System.out.println("2. Leer Clientes");
+                        System.out.println("3. Actualizar Cliente");
+                        System.out.println("4. Eliminar Cliente");
+                        System.out.println("5. Volver al menú principal");
+
+                        opcionClientes = entrada.nextInt();
+
+                        switch (opcionClientes) {
+                            case 1:
+                                insertar_clientes();
+                                break;
+                            case 2:
+                                Consultar_clientes();
+                                break;
+                            case 3:
+                                actualizar_cliente();
+                                break;
+                            case 4:
+                                eliminar_cliente();
+                                break;
+                            case 5:
+                                break; // Volver al menú principal
+                            default:
+                                System.out.println("Opción no válida, por favor ingrese una opción del 1 al 5.");
+                                break;
+                        }
+                    } while (opcionClientes != 5);
                         break;
                     case 5:
                         create_factura();
@@ -103,42 +135,144 @@ public class Proyecto {
 
     }
 
-    public static void create_cliente() {
+    static void insertar_clientes(){
+
+        String persistenceUnitname =null;
+       
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.mycompany_prograll24Grupo7A_jar_1.0-SNAPSHOTPU");
+
+        
+        EntityManager em = emf.createEntityManager();
+        
+        Scanner scanner = new Scanner(System.in);
+        Clientes c = new Clientes();
+        System.out.println("Ingrese el ID del cliente");
+        String idcliente = scanner.nextLine();
+        c.setIdCliente(Long.MIN_VALUE);
+        System.out.println("Ingrese el nombre del cliente:");
+        String Nombre = scanner.nextLine();
+        c.setNombre(Nombre);
+        System.out.println("Ingrese el correo del cliente:");
+        String Correo = scanner.nextLine();
+        c.setCorreo(Correo);
+        System.out.println("Ingrese el numero de telefono del cliente");
+        String telefono = scanner.nextLine();
+        c.setTelefono(telefono);
+        
+        try {
+            em.getTransaction().begin();
+            em.persist(c);
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            em.getTransaction().rollback();
+            e.printStackTrace();
+        } finally {
+        em.close();
+        }
+    }
+    
+    static void Consultar_clientes(){
+             
+        List<Clientes> lstClientes = new ArrayList<>();
+        
+        ClientesJpaController ac = new ClientesJpaController();
+                 
+        try {
+            lstClientes = ac.findClientesEntities();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        for (Clientes al : lstClientes){
+            System.out.println("ID: " + al.getIdCliente());
+            System.out.println("Nombre: " + al.getNombre());
+            System.out.println("Correo: " + al.getCorreo());
+            System.out.println("Numero de Telefono: " + al.getTelefono());
+            System.out.println("---------------------------------------------------");
+            
+        }
+    }
+    
+    static void actualizar_cliente() {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.mycompany_prograll24Grupo7A_jar_1.0-SNAPSHOTPU");
         EntityManager em = emf.createEntityManager();
 
-        Clientes a = new Clientes();
+        ClientesJpaController ac = new ClientesJpaController(emf);
 
-        System.out.println("Ingrese su nombre");
-        String nombre = entrada.nextLine();
-        entrada.nextLine();
-        a.setNombre(nombre);
+        Scanner scanner = new Scanner(System.in);
+        
+        System.out.println("Ingrese el ID del cliente a actualizar:");
+        Long idCliente = scanner.nextLong();
+        scanner.nextLine();  // Consumir la nueva línea
 
-        System.out.println("Ingrese su correo");
-        String correo = entrada.nextLine();
-        a.setCorreo(correo);
+        // Buscar el cliente
+        Clientes cliente = ac.findClientes(idCliente);
+        if (cliente == null) {
+            System.out.println("Cliente no encontrado.");
+            return;
+        }
 
-        System.out.println("Ingrese numero de telefono");
-        String telefono = entrada.nextLine();
-        a.setTelefono(telefono);
+        System.out.println("Cliente encontrado: " + cliente.getNombre());
 
+        System.out.println("Ingrese el nuevo nombre del cliente:");
+        String nuevoNombre = scanner.nextLine();
+        if (!nuevoNombre.isEmpty()) {
+            cliente.setNombre(nuevoNombre);
+        }
+
+        System.out.println("Ingrese el nuevo correo del cliente:");
+        String nuevoCorreo = scanner.nextLine();
+        if (!nuevoCorreo.isEmpty()) {
+            cliente.setCorreo(nuevoCorreo);
+        }
+
+        System.out.println("Ingrese el nuevo número de teléfono del cliente:");
+        String nuevoTelefono = scanner.nextLine();
+        if (!nuevoTelefono.isEmpty()) {
+            cliente.setTelefono(nuevoTelefono);
+        }
+
+        // Actualizar el cliente en la base de datos
         try {
-            em.getTransaction().begin(); // Iniciamos la transacción
-            em.persist(a); // El objeto a es la instancia de la clase Alumno
-            em.getTransaction().commit(); // Si todo salió bien hará el commit
+            ac.edit(cliente);
+            System.out.println("Cliente actualizado con éxito.");
         } catch (Exception e) {
-            em.getTransaction().rollback(); // Si ocurrió una excepción, hará rollback
-            e.printStackTrace(); // Queden registros a medias
+            System.out.println("Error al actualizar el cliente.");
+            e.printStackTrace();
         } finally {
-            em.close(); // Cerramos el EntityManager
-            emf.close(); // Cerramos el EntityManagerFactory
+            em.close();
         }
     }
+  static void eliminar_cliente() {
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.mycompany_prograll24Grupo7A_jar_1.0-SNAPSHOTPU");
+        ClientesJpaController ac = new ClientesJpaController(emf);
 
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Ingrese el ID del cliente que desea eliminar:");
+        Long idCliente = scanner.nextLong();
+
+        // Buscar el cliente para eliminar
+        Clientes cliente = ac.findClientes(idCliente);
+        if (cliente == null) {
+            System.out.println("Cliente no encontrado.");
+            return;
+        }
+
+        // Eliminar el cliente
+        try {
+            ac.destroy(idCliente);
+            System.out.println("Cliente eliminado con éxito.");
+        } catch (Exception e) {
+            System.out.println("Error al eliminar el cliente.");
+            e.printStackTrace();
+        }
+    }            
+            
     public static void create_factura() {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.mycompany_prograll24Grupo7A_jar_1.0-SNAPSHOTPU");
         EntityManager em = emf.createEntityManager();
-
+   
         FacturaJpaController facturaController = new FacturaJpaController();
         boolean estado = true;
         while (estado) {
@@ -156,10 +290,12 @@ public class Proyecto {
                     // Crear nueva factura
                     System.out.print("Ingrese el ID del cliente: ");
                     Long clienteId = entrada.nextLong();
+                    entrada.nextLine();
 
                     System.out.print("Ingrese la fecha de la factura (YYYY-MM-DD): ");
                     String fechaStr = entrada.next();
                     Date fecha = java.sql.Date.valueOf(fechaStr);
+                   
 
                     System.out.print("Ingrese el monto total: ");
                     BigDecimal montoTotal = entrada.nextBigDecimal();
@@ -168,9 +304,9 @@ public class Proyecto {
                     nuevaFactura.setFecha(fecha);
                     nuevaFactura.setMontoTotal(montoTotal);
 
-                    // Aquí podrías obtener el cliente desde la base de datos
+                    //obtener el cliente desde la base de datos
                     Clientes cliente = new Clientes();
-                    cliente.setIdCliente(clienteId);  // Supongamos que ya tienes el cliente con el ID dado
+                    cliente.setIdCliente(clienteId); 
                     nuevaFactura.setClienteId(cliente);
 
                     try {
@@ -186,13 +322,17 @@ public class Proyecto {
                     System.out.print("Ingrese el ID de la factura: ");
                     Long idFactura = entrada.nextLong();
 
-                    Factura factura = facturaController.findFactura(idFactura);
+                   
+                {
+                    Object factura = null;
                     if (factura != null) {
                         System.out.println("Factura encontrada: " + factura);
                     } else {
                         System.out.println("Factura no encontrada.");
                     }
+                }
                     break;
+
 
                 case 3:
                     // Editar factura

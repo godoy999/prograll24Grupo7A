@@ -9,9 +9,11 @@ import javax.persistence.Persistence;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-
+/**
+ *
+ * @author kenny
+ */
 public class ClientesJpaController implements Serializable {
-
     private EntityManagerFactory emf = null;
 
     public ClientesJpaController(EntityManagerFactory emf) {

@@ -45,7 +45,7 @@ public class Inventario implements Serializable {
     private int cantidad;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "productoId", fetch = FetchType.LAZY)
     private List<Ventas> ventasList;
-    @JoinColumn(name = "vendedor_id", referencedColumnName = "id_vendedores", nullable = false)
+    @JoinColumn(name = "id_vendedores", referencedColumnName = "id_vendedores", nullable = false)
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Vendedores vendedorId;
 
@@ -94,12 +94,12 @@ public class Inventario implements Serializable {
         this.ventasList = ventasList;
     }
 
-    public Vendedores getVendedorId() {
+    public Vendedores getvendedorId(){
         return vendedorId;
     }
 
-    public void setVendedorId(Vendedores vendedorId) {
-        this.vendedorId = vendedorId;
+    public void setVendedorId(Vendedores id_vendedores) {
+        this.vendedorId = id_vendedores;
     }
 
     @Override
