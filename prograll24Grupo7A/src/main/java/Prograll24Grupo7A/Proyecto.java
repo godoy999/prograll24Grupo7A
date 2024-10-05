@@ -12,6 +12,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import java.util.Scanner;
 import javax.persistence.EntityTransaction;
+import javax.swing.JOptionPane;
 import test28.Clientes;
 import test28.Factura;
 import test28.FacturaJpaController;
@@ -39,17 +40,26 @@ public class Proyecto {
 
         do {
             try {
-                System.out.println("-------------------------------------------");
-                System.out.println("Bienvenido a nuestra Empresa de tecnologia ");
-                System.out.println("1. Desea agregar un producto al inventario ");
-                System.out.println("2. Desea agregar un vendedor o actualizarlo ");
-                System.out.println("3. Desea ingresar una venta o consultarla ");
-                System.out.println("4. Desea Hacer un CRUD a cliente ");
-                System.out.println("5. Desea Generar la factura ");
-                System.out.println("6. Salir ");
-                System.out.println("Que opcion desea: ");
-                System.out.println("-------------------------------------------");
-                int r = entrada.nextInt();
+                String menu = "-------------------------------------------\n"
+                            + "Bienvenido a nuestra Empresa de tecnologia \n"
+                            + "1. Desea agregar un producto al inventario \n"
+                            + "2. Desea agregar un vendedor o actualizarlo \n"
+                            + "3. Desea ingresar una venta o consultarla \n"
+                            + "4. Desea Hacer un CRUD a cliente \n"
+                            + "5. Desea Generar la factura \n"
+                            + "6. Salir \n"
+                            + "-------------------------------------------\n"
+                            + "Que opcion desea: ";
+                
+                String input = JOptionPane.showInputDialog(null, menu, "Menú Principal", JOptionPane.QUESTION_MESSAGE);
+                
+                // Si el usuario cierra la ventana o no ingresa nada, salir
+                if (input == null || input.trim().isEmpty()) {
+                    estado = false;
+                    JOptionPane.showMessageDialog(null, "Que tengas un Feliz Día!!", "Salir", JOptionPane.INFORMATION_MESSAGE);
+                    break;
+                }
+                int r = Integer.parseInt(input);
 
                 switch (r) {
                     case 1:
@@ -74,21 +84,17 @@ public class Proyecto {
                         estado = true;
                         break;
                     case 6:
-                        System.out.println("Que tengas un Feliz Dia!!");
+                         JOptionPane.showMessageDialog(null, "Que tengas un Feliz Día!!", "Salir", JOptionPane.INFORMATION_MESSAGE);
                         estado = false;
                         break;
                     default:
-
-                        System.out.println("La opcion escogida no es valida!!!!!!");
-                        System.out.println("Intentelo de nuevo ");
-                        estado = true;
+                        JOptionPane.showMessageDialog(null, "La opción escogida no es válida!!\nInténtelo de nuevo", "Error", JOptionPane.WARNING_MESSAGE);
                         break;
                 }
-
-            } catch (Exception e) {
-                System.out.println("Ha ocurrido una excepcion, intentalo de nuevo!!");
-                entrada.nextLine();
-                estado = true;
+            } catch (NumberFormatException e) {
+                // Si el usuario ingresa algo que no es un número
+                JOptionPane.showMessageDialog(null, "Ha ocurrido una excepción. Ingrese un valor numérico válido.", "Error", JOptionPane.ERROR_MESSAGE);
+            
             } finally {
 
             }
