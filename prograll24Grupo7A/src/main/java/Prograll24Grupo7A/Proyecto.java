@@ -88,7 +88,7 @@ public class Proyecto {
                             
                             switch (opcionInventario) {
                                 case 1:
-                                    create_inventario();
+                                    crearInventario(entrada, inventarioController);
                                     break;
                                 case 2:
                                     leerInventario(inventarioController);
@@ -408,54 +408,23 @@ public class Proyecto {
 
     //-----------------------------------------CRUD INVENTARIO------------------------------------------------------------------
     
-    public static void create_inventario() {
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.mycompany_prograll24Grupo7A_jar_1.0-SNAPSHOTPU");
-        EntityManager em = emf.createEntityManager();
-        InventarioJpaController inventarioController = new InventarioJpaController();
+        private static void crearInventario(Scanner scanner, InventarioJpaController inventarioController) {
+        Inventario inventario = new Inventario();
+        System.out.println("Ingrese el ID del inventario");
+        scanner.nextInt();
+        inventario.setIdInventario(Long.MIN_VALUE);
+        System.out.println("Ingrese el nombre del producto:");
+        inventario.setNombreProducto(scanner.nextLine());
+        scanner.nextLine();
+        System.out.println("Ingrese la cantidad del producto:");
+        inventario.setCantidad(scanner.nextInt());
+        
 
         try {
-            // Ingresar los datos para el nuevo producto
-            System.out.println("Ingrese el nombre del producto:");
-            String nombreProducto = entrada.nextLine();
-            entrada.nextLine();
-
-            System.out.println("Ingrese la cantidad:");
-            int cantidad = entrada.nextInt();
-
-            // Nota: Aquí deberías tener un método para validar y obtener un vendedorId existente
-            System.out.println("Ingrese el ID del vendedor:");
-            Long vendedorId = entrada.nextLong();
-
-            // Iniciar transacción para guardar el nuevo inventario
-            em.getTransaction().begin();
-
-            // Crear el objeto Inventario con los datos ingresados
-            Vendedores vendedor = em.find(Vendedores.class, vendedorId);  // Verifica que existe el vendedor con ese ID
-            if (vendedor == null) {
-                System.out.println("Vendedor con ID " + vendedorId + " no existe.");
-                return;
-            }
-
-            Inventario nuevoInventario = new Inventario();
-            nuevoInventario.setNombreProducto(nombreProducto);
-            nuevoInventario.setCantidad(cantidad);
-            nuevoInventario.setVendedorId(vendedor);
-
-            // Persistir (guardar) el nuevo inventario en la base de datos
-            em.persist(nuevoInventario);
-            em.getTransaction().commit();  // Confirmar la transacción
-
-            System.out.println("¡Producto guardado exitosamente!");
-
+            inventarioController.create(inventario);
+            System.out.println("Inventario creado con éxito.");
         } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();  // Revertir si hay un error
-            }
-            e.printStackTrace();
-        } finally {
-            em.close();
-            emf.close();
-            entrada.close();
+            System.out.println("Error al crear inventario: " + e.getMessage());
         }
     }
     
@@ -512,8 +481,8 @@ private static void eliminarInventario(Scanner scanner, InventarioJpaController 
     Long idInventario = null;
     try {
         // Leer la siguiente línea y convertirla en un número Long
-        String input = scanner.nextLine().trim(); // Eliminar espacios innecesarios
-        idInventario = Long.parseLong(input);
+        idInventario = scanner.nextLong();
+        
     } catch (NumberFormatException e) {
         System.out.println("Error: ID inválido. Debe ser un número.");
         return;
