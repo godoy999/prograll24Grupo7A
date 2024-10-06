@@ -698,52 +698,152 @@ private static void eliminarInventario(Scanner scanner, InventarioJpaController 
 
 //-----------------------------------------------------CRUD VENTAS-----------------------------------------------------------------    
     
+    static VentasJpaController ventasController = new VentasJpaController();
     public static void create_ventas() {
         // Crear el EntityManagerFactory 
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.mycompany_prograll24Grupo7A_jar_1.0-SNAPSHOTPU");
-        VentasJpaController ventasController = new VentasJpaController(emf);
+        
 
-        // Solicitar los datos al usuario
-        System.out.println("Creación de una nueva venta");
+         
+        boolean running = true;
 
-        System.out.print("Ingrese la cantidad: ");
-        int cantidad = entrada.nextInt();
-        entrada.nextLine();
+        while (running) {
+            String opcion = JOptionPane.showInputDialog(null, 
+                    "=== Menú de Ventas ===\n"
+                    + "1. Crear Venta\n"
+                    + "2. Leer Venta\n"
+                    + "3. Actualizar Venta\n"
+                    + "4. Eliminar Venta\n"
+                    + "5. Listar todas las Ventas\n"
+                    + "6. Salir\n\n"
+                    + "Elige una opción:");
 
-        System.out.print("Ingrese el precio: ");
-        BigDecimal precio = entrada.nextBigDecimal();
+            if (opcion == null) {
+                running = false;
+                break;
+            }
 
-        System.out.print("Ingrese el ID de la factura: ");
-        Long facturaId = entrada.nextLong();
-        entrada.nextLine();
-
-        System.out.print("Ingrese el ID del producto (Inventario): ");
-        Long productoId = entrada.nextLong();
-
-        // Crear una instancia de Ventas con los datos ingresados
-        Ventas nuevaVenta = new Ventas();
-        nuevaVenta.setCantidad(cantidad);
-        nuevaVenta.setPrecio(precio);
-
-        // Configurar las relaciones con Factura e Inventario
-        Factura factura = new Factura();
-        factura.setIdFactura(facturaId);  // Establecer el ID de la factura
-        nuevaVenta.setFacturaId(factura);
-
-        Inventario inventario = new Inventario();
-        inventario.setIdInventario(productoId);  // Establecer el ID del producto
-        nuevaVenta.setProductoId(inventario);
-
-        // Llamar al método create para guardar la nueva venta en la base de datos
-        try {
-            ventasController.create(nuevaVenta);
-            System.out.println("Venta creada exitosamente.");
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("Error al crear la venta.");
-        } finally {
-            // Cerrar el EntityManagerFactory
-            emf.close();
+            switch (opcion) {
+                case "1":
+                    crearVenta();
+                    break;
+                case "2":
+                    leerVenta();
+                    break;
+                case "3":
+                    actualizarVenta();
+                    break;
+                case "4":
+                    eliminarVenta();
+                    break;
+                case "5":
+                    listarVentas();
+                    break;
+                case "6":
+                    running = false;
+                    break;
+                default:
+                    JOptionPane.showMessageDialog(null, "Opción inválida, intenta de nuevo.");
+            }
         }
     }
-}
+
+    private static void crearVenta() {
+        try {
+            int cantidad = Integer.parseInt(JOptionPane.showInputDialog("Ingrese cantidad:"));
+            BigDecimal precio = new BigDecimal(JOptionPane.showInputDialog("Ingrese precio:"));
+
+            Long facturaId = Long.parseLong(JOptionPane.showInputDialog("Ingrese ID de la Factura:"));
+            Factura factura = ventasController.getEntityManager().find(Factura.class, facturaId);
+
+            Long productoId = Long.parseLong(JOptionPane.showInputDialog("Ingrese ID del Producto (Inventario):"));
+            Inventario inventario = ventasController.getEntityManager().find(Inventario.class, productoId);
+
+            if (factura != null && inventario != null) {
+                Ventas nuevaVenta = new Ventas();
+                nuevaVenta.setCantidad(cantidad);
+                nuevaVenta.setPrecio(precio);
+                nuevaVenta.setFacturaId(factura);
+                nuevaVenta.setProductoId(inventario);
+
+                ventasController.create(nuevaVenta);
+                JOptionPane.showMessageDialog(null, "Venta creada con éxito:\n" + nuevaVenta);
+            } else {
+                JOptionPane.showMessageDialog(null, "Factura o Producto no encontrados.");
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error al crear la venta: " + e.getMessage());
+        }
+    }
+
+    private static void leerVenta() {
+        try {
+            Long id = Long.parseLong(JOptionPane.showInputDialog("Ingrese ID de la Venta a leer:"));
+            Ventas venta = ventasController.findVentas(id);
+
+            if (venta != null) {
+                JOptionPane.showMessageDialog(null, "Venta encontrada:\n" + venta);
+            } else {
+                JOptionPane.showMessageDialog(null, "Venta no encontrada.");
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error al leer la venta: " + e.getMessage());
+        }
+    }
+
+    private static void actualizarVenta() {
+        try {
+            Long id = Long.parseLong(JOptionPane.showInputDialog("Ingrese ID de la Venta a actualizar:"));
+            Ventas venta = ventasController.findVentas(id);
+
+            if (venta != null) {
+                int cantidad = Integer.parseInt(JOptionPane.showInputDialog("Nueva cantidad:"));
+                BigDecimal precio = new BigDecimal(JOptionPane.showInputDialog("Nuevo precio:"));
+
+                Long facturaId = Long.parseLong(JOptionPane.showInputDialog("Ingrese nuevo ID de la Factura:"));
+                Factura factura = ventasController.getEntityManager().find(Factura.class, facturaId);
+
+                Long productoId = Long.parseLong(JOptionPane.showInputDialog("Ingrese nuevo ID del Producto (Inventario):"));
+                Inventario inventario = ventasController.getEntityManager().find(Inventario.class, productoId);
+
+                if (factura != null && inventario != null) {
+                    venta.setCantidad(cantidad);
+                    venta.setPrecio(precio);
+                    venta.setFacturaId(factura);
+                    venta.setProductoId(inventario);
+
+                    ventasController.edit(venta);
+                    JOptionPane.showMessageDialog(null, "Venta actualizada con éxito:\n" + venta);
+                } else {
+                    JOptionPane.showMessageDialog(null, "Factura o Producto no encontrados.");
+                }
+            } else {
+                JOptionPane.showMessageDialog(null, "Venta no encontrada.");
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error al actualizar la venta: " + e.getMessage());
+        }
+    }
+
+    private static void eliminarVenta() {
+        try {
+            Long id = Long.parseLong(JOptionPane.showInputDialog("Ingrese ID de la Venta a eliminar:"));
+            ventasController.destroy(id);
+            JOptionPane.showMessageDialog(null, "Venta eliminada con éxito.");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error al eliminar la venta: " + e.getMessage());
+        }
+    }
+
+    private static void listarVentas() {
+        List<Ventas> ventasList = ventasController.findVentasEntities();
+        if (!ventasList.isEmpty()) {
+            StringBuilder listado = new StringBuilder("=== Listado de Ventas ===\n");
+            for (Ventas venta : ventasList) {
+                listado.append(venta).append("\n");
+            }
+            JOptionPane.showMessageDialog(null, listado.toString());
+        } else {
+            JOptionPane.showMessageDialog(null, "No se encontraron ventas.");
+        }
+    }
+    }
