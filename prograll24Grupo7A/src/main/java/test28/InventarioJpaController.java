@@ -1,21 +1,18 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package test28;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityNotFoundException;
 import javax.persistence.Persistence;
 import javax.persistence.TypedQuery;
 import java.util.List;
 
 public class InventarioJpaController {
-    
+
     private EntityManagerFactory emf;
 
     public InventarioJpaController() {
-        this.emf = Persistence.createEntityManagerFactory("com.mycompany_prograll24Grupo7A_jar_1.0-SNAPSHOTPU"); 
+        this.emf = Persistence.createEntityManagerFactory("com.mycompany_prograll24Grupo7A_jar_1.0-SNAPSHOTPU");
     }
 
     private EntityManager getEntityManager() {
@@ -29,7 +26,9 @@ public class InventarioJpaController {
             TypedQuery<Inventario> query = em.createNamedQuery("Inventario.findAll", Inventario.class);
             return query.getResultList();
         } finally {
-            em.close();
+            if (em != null) {
+                em.close();
+            }
         }
     }
 
@@ -39,7 +38,9 @@ public class InventarioJpaController {
         try {
             return em.find(Inventario.class, id);
         } finally {
-            em.close();
+            if (em != null) {
+                em.close();
+            }
         }
     }
 
@@ -47,49 +48,63 @@ public class InventarioJpaController {
     public void create(Inventario inventario) throws Exception {
         EntityManager em = getEntityManager();
         try {
-            em.getTransaction().begin();
-            em.persist(inventario);
-            em.getTransaction().commit();
-        } catch (Exception ex) {
+            em.getTransaction().begin(); // Iniciar la transacción
             if (findInventario(inventario.getIdInventario()) != null) {
                 throw new Exception("El inventario con id " + inventario.getIdInventario() + " ya existe.");
             }
+            em.persist(inventario);
+            em.getTransaction().commit(); // Commit de la transacción
+        } catch (Exception ex) {
+            em.getTransaction().rollback(); // En caso de error, revertimos la transacción
             throw ex;
         } finally {
-            em.close();
+            if (em != null) {
+                em.close();
+            }
         }
     }
 
-    // Método para actualizar un inventario
+    // Método para actualizar un inventario existente
     public void edit(Inventario inventario) throws Exception {
         EntityManager em = getEntityManager();
         try {
-            em.getTransaction().begin();
-            em.merge(inventario);
-            em.getTransaction().commit();
-        } catch (Exception ex) {
+            em.getTransaction().begin(); // Iniciar la transacción
             if (findInventario(inventario.getIdInventario()) == null) {
                 throw new Exception("El inventario con id " + inventario.getIdInventario() + " no existe.");
             }
+            em.merge(inventario);
+            em.getTransaction().commit(); // Commit de la transacción
+        } catch (Exception ex) {
+            em.getTransaction().rollback(); // Revertir transacción en caso de error
             throw ex;
         } finally {
-            em.close();
+            if (em != null) {
+                em.close();
+            }
         }
     }
 
-    // Método para eliminar un inventario
+    // Método para eliminar un inventario por ID
     public void destroy(Long id) throws Exception {
         EntityManager em = getEntityManager();
         try {
-            em.getTransaction().begin();
-            Inventario inventario = em.getReference(Inventario.class, id);
-            if (inventario == null) {
-                throw new Exception("El inventario con id " + id + " no existe.");
+            em.getTransaction().begin(); // Iniciar la transacción
+            Inventario inventario;
+            try {
+                inventario = em.getReference(Inventario.class, id);
+                inventario.getIdInventario(); // Verificar si el inventario existe
+            } catch (EntityNotFoundException enfe) {
+                throw new Exception("El inventario con id " + id + " no existe.", enfe);
             }
             em.remove(inventario);
-            em.getTransaction().commit();
+            em.getTransaction().commit(); // Commit de la transacción
+        } catch (Exception ex) {
+            em.getTransaction().rollback(); // Revertir transacción en caso de error
+            throw ex;
         } finally {
-            em.close();
+            if (em != null) {
+                em.close();
+            }
         }
     }
 

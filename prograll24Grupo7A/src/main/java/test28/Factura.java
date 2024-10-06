@@ -130,7 +130,7 @@ public class Factura implements Serializable {
 
     @Override
     public String toString() {
-        return "test28.Factura[ idFactura=" + idFactura + " ]";
+        return "[ idFactura=" + idFactura + " ]";
     }
     
 }

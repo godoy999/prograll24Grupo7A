@@ -71,41 +71,7 @@ public class Proyecto {
 
                 switch (r) {
                     case 1:
-                        int opcionInventario = 0;
-                    {
-                       
-                        do {
-                            System.out.println("Seleccione una opción:");
-                            System.out.println("1. Crear Inventario");
-                            System.out.println("2. Leer Inventario");
-                            System.out.println("3. Actualizar Inventario");
-                            System.out.println("4. Eliminar Inventario");
-                            System.out.println("5. Salir");
-                            
-                            opcionInventario = entrada.nextInt();
-                            
-                            switch (opcionInventario) {
-                                case 1:
-                                    create_inventario();
-                                    break;
-                                case 2:
-                                    leerInventario(inventarioController);
-                                    break;
-                                case 3:
-                                    actualizarInventario(entrada, inventarioController);
-                                    break;
-                                case 4:
-                                    eliminarInventario(entrada, inventarioController);
-                                    break;
-                                case 5:
-                                    inventarioController.close();
-                                    System.out.println("Saliendo...");
-                                    break;
-                                default:
-                                    System.out.println("Opción no válida. Intente de nuevo.");
-                            }
-                        } while (opcion != 5);
-                    }
+                        create_inventario();
                     
                         estado = true;
                         break;
@@ -397,127 +363,134 @@ public class Proyecto {
         }
     }
 
-    //-----------------------------------------CRUD INVENTARIO------------------------------------------------------------------
+    //-----------------------------------------CRUD INVENTARIO------------------------------------------------------------------s
     
+    static InventarioJpaController inventarioController = new InventarioJpaController();
+    static EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.mycompany_prograll24Grupo7A_jar_1.0-SNAPSHOTPU");
     public static void create_inventario() {
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.mycompany_prograll24Grupo7A_jar_1.0-SNAPSHOTPU");
+        
+        String menuOptions = "1. Crear Inventario\n2. Editar Inventario\n3. Eliminar Inventario\n4. Buscar Inventario\n5. Mostrar Todos los Inventarios\n6. Salir";
+        int option;
+        do {
+            option = Integer.parseInt(JOptionPane.showInputDialog(menuOptions));
+            switch (option) {
+                case 1:
+                    crearInventario();
+                    break;
+                case 2:
+                    editarInventario();
+                    break;
+                case 3:
+                    eliminarInventario();
+                    break;
+                case 4:
+                    buscarInventario();
+                    break;
+                case 5:
+                    mostrarInventarios();
+                    break;
+                case 6:
+                    JOptionPane.showMessageDialog(null, "Saliendo...");
+                    
+                    break;
+                default:
+                    JOptionPane.showMessageDialog(null, "Opción inválida");
+            }
+        } while (option != 6);
+    }
+
+
+    public static void crearInventario() {
         EntityManager em = emf.createEntityManager();
-        InventarioJpaController inventarioController = new InventarioJpaController();
-
         try {
-            // Ingresar los datos para el nuevo producto
-            System.out.println("Ingrese el nombre del producto:");
-            String nombreProducto = entrada.nextLine();
-            entrada.nextLine();
+            String nombreProducto = JOptionPane.showInputDialog("Ingrese el nombre del producto:");
+            int cantidad = Integer.parseInt(JOptionPane.showInputDialog("Ingrese la cantidad:"));
 
-            System.out.println("Ingrese la cantidad:");
-            int cantidad = entrada.nextInt();
+            Inventario inventario = new Inventario();
+            inventario.setNombreProducto(nombreProducto);
+            inventario.setCantidad(cantidad);
 
-            // Nota: Aquí deberías tener un método para validar y obtener un vendedorId existente
-            System.out.println("Ingrese el ID del vendedor:");
-            Long vendedorId = entrada.nextLong();
-
-            // Iniciar transacción para guardar el nuevo inventario
-            em.getTransaction().begin();
-
-            // Crear el objeto Inventario con los datos ingresados
-            Vendedores vendedor = em.find(Vendedores.class, vendedorId);  // Verifica que existe el vendedor con ese ID
-            if (vendedor == null) {
-                System.out.println("Vendedor con ID " + vendedorId + " no existe.");
-                return;
-            }
-
-            Inventario nuevoInventario = new Inventario();
-            nuevoInventario.setNombreProducto(nombreProducto);
-            nuevoInventario.setCantidad(cantidad);
-            nuevoInventario.setVendedorId(vendedor);
-
-            // Persistir (guardar) el nuevo inventario en la base de datos
-            em.persist(nuevoInventario);
-            em.getTransaction().commit();  // Confirmar la transacción
-
-            System.out.println("¡Producto guardado exitosamente!");
-
+            inventarioController.create(inventario);
+            JOptionPane.showMessageDialog(null, "Inventario creado con éxito");
         } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();  // Revertir si hay un error
-            }
-            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error al crear inventario: " + e.getMessage());
         } finally {
             em.close();
-            emf.close();
-            entrada.close();
-        }
-    }
-    
-        private static void leerInventario(InventarioJpaController inventarioController) {
-        List<Inventario> inventarios = inventarioController.findInventarioEntities();
-        if (inventarios.isEmpty()) {
-            System.out.println("No hay inventarios disponibles.");
-        } else {
-            System.out.println("Inventarios:");
-            for (Inventario inventario : inventarios) {
-                System.out.println("ID: " + inventario.getIdInventario() + ", Nombre: " + inventario.getNombreProducto() + 
-                                   ", Cantidad: " + inventario.getCantidad());
-            }
         }
     }
 
-    private static void actualizarInventario(Scanner scanner, InventarioJpaController inventarioController) {
-        System.out.println("Ingrese el ID del inventario a actualizar:");
-        Long id = scanner.nextLong();
-        Inventario inventario = inventarioController.findInventario(id);
-
-        if (inventario == null) {
-            System.out.println("Inventario no encontrado.");
-            return;
-        }
-
-        System.out.println("Nombre actual: " + inventario.getNombreProducto());
-        System.out.println("Ingrese el nuevo nombre del producto (deje vacío para no cambiar):");
-        scanner.nextLine(); // Consumir la nueva línea
-        String nuevoNombre = scanner.nextLine();
-        if (!nuevoNombre.isEmpty()) {
-            inventario.setNombreProducto(nuevoNombre);
-        }
-
-        System.out.println("Cantidad actual: " + inventario.getCantidad());
-        System.out.println("Ingrese la nueva cantidad (deje vacío para no cambiar):");
-        String nuevaCantidadStr = scanner.nextLine();
-        if (!nuevaCantidadStr.isEmpty()) {
-            inventario.setCantidad(Integer.parseInt(nuevaCantidadStr));
-        }
-
+    public static void editarInventario() {
+        EntityManager em = emf.createEntityManager();
         try {
-            inventarioController.edit(inventario);
-            System.out.println("Inventario actualizado con éxito.");
+            Long id = Long.parseLong(JOptionPane.showInputDialog("Ingrese el ID del inventario a editar:"));
+            Inventario inventario = inventarioController.findInventario(id);
+
+            if (inventario != null) {
+                String nombreProducto = JOptionPane.showInputDialog("Ingrese el nuevo nombre del producto:", inventario.getNombreProducto());
+                int cantidad = Integer.parseInt(JOptionPane.showInputDialog("Ingrese la nueva cantidad:", inventario.getCantidad()));
+
+                inventario.setNombreProducto(nombreProducto);
+                inventario.setCantidad(cantidad);
+
+                inventarioController.edit(inventario);
+                JOptionPane.showMessageDialog(null, "Inventario editado con éxito");
+            } else {
+                JOptionPane.showMessageDialog(null, "Inventario no encontrado");
+            }
         } catch (Exception e) {
-            System.out.println("Error al actualizar inventario: " + e.getMessage());
+            JOptionPane.showMessageDialog(null, "Error al editar inventario: " + e.getMessage());
+        } finally {
+            em.close();
         }
     }
 
-private static void eliminarInventario(Scanner scanner, InventarioJpaController inventarioController) {
-    System.out.println("Ingrese el ID del inventario a eliminar:");
-
-    // Asegurarse de que el ID se lea correctamente
-    Long idInventario = null;
-    try {
-        // Leer la siguiente línea y convertirla en un número Long
-        String input = scanner.nextLine().trim(); // Eliminar espacios innecesarios
-        idInventario = Long.parseLong(input);
-    } catch (NumberFormatException e) {
-        System.out.println("Error: ID inválido. Debe ser un número.");
-        return;
+    public static void eliminarInventario() {
+        EntityManager em = emf.createEntityManager();
+        try {
+            Long id = Long.parseLong(JOptionPane.showInputDialog("Ingrese el ID del inventario a eliminar:"));
+            inventarioController.destroy(id);
+            JOptionPane.showMessageDialog(null, "Inventario eliminado con éxito");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error al eliminar inventario: " + e.getMessage());
+        } finally {
+            em.close();
+        }
     }
 
-    // Intentar eliminar el inventario con el ID ingresado
-    try {
-        inventarioController.destroy(idInventario);
-        System.out.println("Inventario eliminado con éxito.");
-    } catch (Exception e) {
-        System.out.println("Error al eliminar inventario: " + e.getMessage());
+    public static void buscarInventario() {
+        EntityManager em = emf.createEntityManager();
+        try {
+            Long id = Long.parseLong(JOptionPane.showInputDialog("Ingrese el ID del inventario a buscar:"));
+            Inventario inventario = inventarioController.findInventario(id);
+
+            if (inventario != null) {
+                JOptionPane.showMessageDialog(null, "Inventario encontrado:\n" + inventario);
+            } else {
+                JOptionPane.showMessageDialog(null, "Inventario no encontrado");
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error al buscar inventario: " + e.getMessage());
+        } finally {
+            em.close();
+        }
     }
-}
+
+    public static void mostrarInventarios() {
+        EntityManager em = emf.createEntityManager();
+        try {
+            StringBuilder inventarioList = new StringBuilder();
+            for (Inventario inventario : inventarioController.findInventarioEntities()) {
+                inventarioList.append(inventario).append("\n");
+            }
+            JOptionPane.showMessageDialog(null, inventarioList.length() > 0 ? inventarioList.toString() : "No hay inventarios registrados");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error al mostrar inventarios: " + e.getMessage());
+        } finally {
+            em.close();
+        }
+    }
+       
+
 
 
 

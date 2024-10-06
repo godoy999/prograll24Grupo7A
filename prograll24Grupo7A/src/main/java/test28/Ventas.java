@@ -124,7 +124,7 @@ public class Ventas implements Serializable {
 
     @Override
     public String toString() {
-        return "test28.Ventas[ idVentas=" + idVentas + " ]";
+        return "[ idVentas=" + idVentas + " ]";
     }
     
 }

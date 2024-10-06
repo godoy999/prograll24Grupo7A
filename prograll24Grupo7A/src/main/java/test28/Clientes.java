@@ -123,7 +123,7 @@ public class Clientes implements Serializable {
 
     @Override
     public String toString() {
-        return "test28.Clientes[ idCliente=" + idCliente + " ]";
+        return "[ idCliente=" + idCliente + " ]";
     }
     
 }
