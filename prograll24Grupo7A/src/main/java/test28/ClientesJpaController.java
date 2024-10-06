@@ -9,33 +9,26 @@ import javax.persistence.Persistence;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-/**
- *
- * @author kenny
- */
+import test28.exceptions.NonexistentEntityException;
+
 public class ClientesJpaController implements Serializable {
+
     private EntityManagerFactory emf = null;
 
-    public ClientesJpaController(EntityManagerFactory emf) {
-        this.emf = emf;
-    }
-
-    
     public ClientesJpaController() {
-        this.emf = Persistence.createEntityManagerFactory("com.mycompany_prograll24Grupo7A_jar_1.0-SNAPSHOTPU");                     //("test28PU"); // Cambia "test28PU" por el nombre de tu unidad de persistencia definida en persistence.xml
+        this.emf = Persistence.createEntityManagerFactory("com.mycompany_prograll24Grupo7A_jar_1.0-SNAPSHOTPU");
     }
 
     public EntityManager getEntityManager() {
         return emf.createEntityManager();
     }
 
-    // Método para crear un nuevo cliente
-    public void create(Clientes clientes) {
+    public void create(Clientes cliente) {
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            em.persist(clientes);
+            em.persist(cliente);
             em.getTransaction().commit();
         } finally {
             if (em != null) {
@@ -44,17 +37,17 @@ public class ClientesJpaController implements Serializable {
         }
     }
 
-    // Método para editar un cliente existente
-    public void edit(Clientes clientes) throws Exception {
+    public void edit(Clientes cliente) throws NonexistentEntityException, Exception {
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            clientes = em.merge(clientes);
+            cliente = em.merge(cliente);
             em.getTransaction().commit();
         } catch (Exception ex) {
-            if (findClientes(clientes.getIdCliente()) == null) {
-                throw new EntityNotFoundException("El cliente con el id " + clientes.getIdCliente() + " no existe.");
+            Long id = cliente.getIdCliente();
+            if (id == null || findCliente(id) == null) {
+                throw new NonexistentEntityException("El cliente con id " + id + " no existe.");
             }
             throw ex;
         } finally {
@@ -64,20 +57,19 @@ public class ClientesJpaController implements Serializable {
         }
     }
 
-    // Método para eliminar un cliente
-    public void destroy(Long id) throws EntityNotFoundException {
+    public void destroy(Long id) throws NonexistentEntityException {
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            Clientes clientes;
+            Clientes cliente;
             try {
-                clientes = em.getReference(Clientes.class, id);
-                clientes.getIdCliente();
+                cliente = em.getReference(Clientes.class, id);
+                cliente.getIdCliente();
             } catch (EntityNotFoundException enfe) {
-                throw new EntityNotFoundException("El cliente con el id " + id + " no existe.");
+                throw new NonexistentEntityException("El cliente con id " + id + " no existe.", enfe);
             }
-            em.remove(clientes);
+            em.remove(cliente);
             em.getTransaction().commit();
         } finally {
             if (em != null) {
@@ -86,17 +78,6 @@ public class ClientesJpaController implements Serializable {
         }
     }
 
-    // Método para buscar un cliente por su id
-    public Clientes findClientes(Long id) {
-        EntityManager em = getEntityManager();
-        try {
-            return em.find(Clientes.class, id);
-        } finally {
-            em.close();
-        }
-    }
-
-    // Método para obtener una lista de todos los clientes
     public List<Clientes> findClientesEntities() {
         return findClientesEntities(true, -1, -1);
     }
@@ -121,7 +102,15 @@ public class ClientesJpaController implements Serializable {
         }
     }
 
-    // Método para obtener la cantidad total de clientes
+    public Clientes findCliente(Long id) {
+        EntityManager em = getEntityManager();
+        try {
+            return em.find(Clientes.class, id);
+        } finally {
+            em.close();
+        }
+    }
+
     public int getClientesCount() {
         EntityManager em = getEntityManager();
         try {
