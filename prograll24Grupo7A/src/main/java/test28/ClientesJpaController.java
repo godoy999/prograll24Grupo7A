@@ -19,6 +19,10 @@ public class ClientesJpaController implements Serializable {
         this.emf = Persistence.createEntityManagerFactory("com.mycompany_prograll24Grupo7A_jar_1.0-SNAPSHOTPU");
     }
 
+    public ClientesJpaController(EntityManagerFactory emf) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
     public EntityManager getEntityManager() {
         return emf.createEntityManager();
     }

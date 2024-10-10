@@ -4,17 +4,24 @@
  */
 package Prograll24Grupo7A;
 
-
+//import static Prograll24Grupo7A.Proyecto1.iniciarSesion;
+//import static Prograll24Grupo7A.Proyecto1.registrarUsuario;
 import java.math.BigDecimal;
-import java.util.ArrayList;
+import static java.time.Clock.system;
 import java.util.Date;
-import java.util.InputMismatchException;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import java.util.Scanner;
+import javax.persistence.EntityNotFoundException;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
 import test28.Clientes;
 import test28.ClientesJpaController;
 import test28.Factura;
@@ -29,40 +36,44 @@ import test28.Vendedores;
 import test28.VendedoresJpaController;
 import test28.Ventas;
 import test28.VentasJpaController;
+import static test28.Ventas_.precio;
 import test28.exceptions.NonexistentEntityException;
 
 public class Proyecto {
 
     static Scanner entrada = new Scanner(System.in);
     static boolean estado = true;
+    static InventarioJpaController inventarioController;
 
     public static void main(String[] args) {
+        //createInventario();
+        //login();
+        menu();
+    }
+    //------------------------------------------------LOGIN------------------------------------------------------------   
 
-        
     
-       // login();
-        // create_usuario();
-        //create_rol();
-        
-        InventarioJpaController inventarioController = new InventarioJpaController();
+
+    public static void menu() {
+
         int opcion = 0;
         do {
             try {
                 String menu = "-------------------------------------------\n"
-                            + "Bienvenido a nuestra Empresa de tecnologia \n"
-                            + "1. Desea agregar un producto al inventario \n"
-                            + "2. Desea agregar un vendedor o actualizarlo \n"
-                            + "3. Desea ingresar una venta o consultarla \n"
-                            + "4. Desea Hacer un CRUD a cliente \n"
-                            + "5. Desea Generar la factura \n"
-                            + "6. Roles para los usuarios \n"
-                            + "7. Crear un Usuario \n"
-                            + "8. Salir \n"
-                            + "-------------------------------------------\n"
-                            + "Que opcion desea: ";
-                
+                        + "Bienvenido a nuestra Empresa de tecnologia \n"
+                        + "1. Desea agregar un producto al inventario \n"
+                        + "2. Desea agregar un vendedor o actualizarlo \n"
+                        + "3. Desea ingresar una venta o consultarla \n"
+                        + "4. Desea Hacer un CRUD a cliente \n"
+                        + "5. Desea Generar la factura \n"
+                        + "6. Roles para los usuarios \n"
+                        + "7. Crear un Usuario \n"
+                        + "8. Salir \n"
+                        + "-------------------------------------------\n"
+                        + "Que opcion desea: ";
+
                 String input = JOptionPane.showInputDialog(null, menu, "Menú Principal", JOptionPane.QUESTION_MESSAGE);
-                
+
                 // Si el usuario cierra la ventana o no ingresa nada, salir
                 if (input == null || input.trim().isEmpty()) {
                     estado = false;
@@ -74,41 +85,53 @@ public class Proyecto {
                 switch (r) {
                     case 1:
                         int opcionInventario = 0;
-                    {
-                       
+
                         do {
-                            System.out.println("Seleccione una opción:");
-                            System.out.println("1. Crear Inventario");
-                            System.out.println("2. Leer Inventario");
-                            System.out.println("3. Actualizar Inventario");
-                            System.out.println("4. Eliminar Inventario");
-                            System.out.println("5. Salir");
-                            
-                            opcionInventario = entrada.nextInt();
-                            
-                            switch (opcionInventario) {
-                                case 1:
-                                    crearInventario(entrada, inventarioController);
-                                    break;
-                                case 2:
-                                    leerInventario(inventarioController);
-                                    break;
-                                case 3:
-                                    actualizarInventario(entrada, inventarioController);
-                                    break;
-                                case 4:
-                                    eliminarInventario(entrada, inventarioController);
-                                    break;
-                                case 5:
-                                    inventarioController.close();
-                                    System.out.println("Saliendo...");
-                                    break;
-                                default:
-                                    System.out.println("Opción no válida. Intente de nuevo.");
+                            String opcionStr = JOptionPane.showInputDialog(null,
+                                    "Seleccione una opción:\n"
+                                    + "1. Crear Inventario\n"
+                                    + "2. Leer Inventario\n"
+                                    + "3. Actualizar Inventario\n"
+                                    + "4. Eliminar Inventario\n"
+                                    + "5. Mostrar la lista del inventario\n"
+                                    + "6. Regresar al menú principal",
+                                    "Menú Inventario", JOptionPane.QUESTION_MESSAGE);
+
+                            if (opcionStr != null && !opcionStr.isEmpty()) {
+                                try {
+                                    opcionInventario = Integer.parseInt(opcionStr);
+                                } catch (NumberFormatException e) {
+                                    JOptionPane.showMessageDialog(null, "Opción no válida. Por favor, ingrese un número.", "Error", JOptionPane.ERROR_MESSAGE);
+                                    continue;
+                                }
+                                switch (opcionInventario) {
+                                    case 1:
+                                        createInventario();
+                                        break;
+                                    case 2:
+                                        findInventario();
+
+                                        break;
+                                    case 3:
+                                        updateInventario();
+                                        break;
+                                    case 4:
+                                        deleteInventario();
+                                        break;
+                                    case 5:
+                                        listInventarios();
+                                        break;
+                                    case 6:
+                                        JOptionPane.showMessageDialog(null, "Regresando al menú principal.");
+                                        menu();
+                                        break;
+                                    default:
+                                        JOptionPane.showMessageDialog(null, "Opción no válida. Intente de nuevo.");
+
+                                }
                             }
                         } while (opcion != 5);
-                    }
-                    
+
                         estado = true;
                         break;
 
@@ -118,26 +141,28 @@ public class Proyecto {
                         break;
 
                     case 3:
-                        create_ventas();
+//                        create_ventas();
                         estado = true;
+
                         break;
                     case 4:
-                          create_cliente();
-                              
+                        create_cliente();
+
                         break;
                     case 5:
                         create_factura();
                         estado = true;
                         break;
-                    case 6: 
+                    case 6:
                         create_rol();
                         break;
                     case 7:
                         create_usuario();
                         break;
                     case 8:
-                         JOptionPane.showMessageDialog(null, "Que tengas un Feliz Día!!", "Salir", JOptionPane.INFORMATION_MESSAGE);
+                        JOptionPane.showMessageDialog(null, "Que tengas un Feliz Día!!", "Salir", JOptionPane.INFORMATION_MESSAGE);
                         estado = false;
+                        System.exit(0);
                         break;
                     default:
                         JOptionPane.showMessageDialog(null, "La opción escogida no es válida!!\nInténtelo de nuevo", "Error", JOptionPane.WARNING_MESSAGE);
@@ -146,7 +171,7 @@ public class Proyecto {
             } catch (NumberFormatException e) {
                 // Si el usuario ingresa algo que no es un número
                 JOptionPane.showMessageDialog(null, "Ha ocurrido una excepción. Ingrese un valor numérico válido.", "Error", JOptionPane.ERROR_MESSAGE);
-            
+
             } finally {
 
             }
@@ -156,7 +181,8 @@ public class Proyecto {
     }
 
 //------------------------------------------------CRUD CLIENTES------------------------------------------------------------    
-     static ClientesJpaController clientesController = new ClientesJpaController();
+    static ClientesJpaController clientesController = new ClientesJpaController();
+
     public static void create_cliente() {
         String menuOptions = "1. Crear Cliente\n2. Editar Cliente\n3. Eliminar Cliente\n4. Buscar Cliente\n5. Mostrar Todos los Clientes\n6. Salir";
         int option;
@@ -285,222 +311,235 @@ public class Proyecto {
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Error al mostrar clientes: " + e.getMessage());
         }
-    } 
-    
-         
-    
+    }
 
-    
 //---------------------------------------------------CRUD FACTURA------------------------------------------------------------------  
-  
     public static void create_factura() {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.mycompany_prograll24Grupo7A_jar_1.0-SNAPSHOTPU");
         EntityManager em = emf.createEntityManager();
-   
+
         FacturaJpaController facturaController = new FacturaJpaController();
         boolean estado = true;
+
         while (estado) {
-            System.out.println("------ Menú ------");
-            System.out.println("1. Crear nueva factura");
-            System.out.println("2. Buscar factura por ID");
-            System.out.println("3. Editar factura");
-            System.out.println("4. Eliminar factura");
-            System.out.println("5. Salir");
-            System.out.print("Selecciona una opción: ");
-            int opcion = entrada.nextInt();
+            String[] opciones = {"Crear nueva factura", "Buscar factura por ID", "Editar factura", "Eliminar factura", "Salir"};
+            int opcion = JOptionPane.showOptionDialog(null, "Selecciona una opción:", "Menú de Facturas",
+                    JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, opciones, opciones[0]);
 
-            
             switch (opcion) {
-                case 1:
+                case 0:
                     // Crear nueva factura
-                    System.out.print("Ingrese el ID del cliente: ");
-                    Long clienteId = entrada.nextLong();
-                    entrada.nextLine();
-
-                    System.out.print("Ingrese la fecha de la factura (YYYY-MM-DD): ");
-                    String fechaStr = entrada.next();
-                    Date fecha = java.sql.Date.valueOf(fechaStr);
-                   
-
-                    System.out.print("Ingrese el monto total: ");
-                    BigDecimal montoTotal = entrada.nextBigDecimal();
-
-                    Factura nuevaFactura = new Factura();
-                    nuevaFactura.setFecha(fecha);
-                    nuevaFactura.setMontoTotal(montoTotal);
-
-                    //obtener el cliente desde la base de datos
-                    Clientes cliente = new Clientes();
-                    cliente.setIdCliente(clienteId); 
-                    nuevaFactura.setClienteId(cliente);
-
                     try {
+                        String clienteIdStr = JOptionPane.showInputDialog("Ingrese el ID del cliente:");
+                        Long clienteId = Long.parseLong(clienteIdStr);
+
+                        String fechaStr = JOptionPane.showInputDialog("Ingrese la fecha de la factura (YYYY-MM-DD):");
+                        Date fecha = java.sql.Date.valueOf(fechaStr);
+
+                        String montoTotalStr = JOptionPane.showInputDialog("Ingrese el monto total:");
+                        BigDecimal montoTotal = new BigDecimal(montoTotalStr);
+
+                        Factura nuevaFactura = new Factura();
+                        nuevaFactura.setFecha(fecha);
+                        nuevaFactura.setMontoTotal(montoTotal);
+
+                        Clientes cliente = new Clientes();
+                        cliente.setIdCliente(clienteId);
+                        nuevaFactura.setClienteId(cliente);
+
                         facturaController.create(nuevaFactura);
-                        System.out.println("Factura creada exitosamente.");
+                        JOptionPane.showMessageDialog(null, "Factura creada exitosamente.");
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        JOptionPane.showMessageDialog(null, "Error al crear la factura: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                    break;
+
+                case 1:
+                    // Buscar factura por ID
+                    try {
+                        String idFacturaStr = JOptionPane.showInputDialog("Ingrese el ID de la factura:");
+                        Long idFactura = Long.parseLong(idFacturaStr);
+
+                        Factura factura = facturaController.findFactura(idFactura);
+                        if (factura != null) {
+                            String detallesFactura = "Factura encontrada:\n"
+                                    + "ID: " + factura.getIdFactura() + "\n"
+                                    + "Fecha: " + factura.getFecha() + "\n"
+                                    + "Monto Total: " + factura.getMontoTotal() + "\n"
+                                    + "Cliente ID: " + factura.getClienteId().getIdCliente();
+                            JOptionPane.showMessageDialog(null, detallesFactura);
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Factura no encontrada.");
+                        }
+                    } catch (Exception e) {
+                        JOptionPane.showMessageDialog(null, "Error al buscar la factura: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                     }
                     break;
 
                 case 2:
-                    // Buscar factura por ID
-                    System.out.print("Ingrese el ID de la factura: ");
-                    Long idFactura = entrada.nextLong();
+                    // Editar factura
+                    try {
+                        String idFacturaEditarStr = JOptionPane.showInputDialog("Ingrese el ID de la factura a editar:");
+                        Long idFacturaEditar = Long.parseLong(idFacturaEditarStr);
 
-                   
-                {
-                    Object factura = null;
-                    if (factura != null) {
-                        System.out.println("Factura encontrada: " + factura);
-                    } else {
-                        System.out.println("Factura no encontrada.");
+                        Factura facturaAEditar = facturaController.findFactura(idFacturaEditar);
+                        if (facturaAEditar != null) {
+                            String nuevoMontoTotalStr = JOptionPane.showInputDialog("Ingrese el nuevo monto total:");
+                            BigDecimal nuevoMontoTotal = new BigDecimal(nuevoMontoTotalStr);
+                            facturaAEditar.setMontoTotal(nuevoMontoTotal);
+
+                            facturaController.edit(facturaAEditar);
+                            JOptionPane.showMessageDialog(null, "Factura actualizada exitosamente.");
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Factura no encontrada.");
+                        }
+                    } catch (Exception e) {
+                        JOptionPane.showMessageDialog(null, "Error al editar la factura: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                     }
-                }
                     break;
 
-
                 case 3:
-                    // Editar factura
-                    System.out.print("Ingrese el ID de la factura a editar: ");
-                    Long idFacturaEditar = entrada.nextLong();
+                    // Eliminar factura
+                    try {
+                        String idFacturaEliminarStr = JOptionPane.showInputDialog("Ingrese el ID de la factura a eliminar:");
+                        Long idFacturaEliminar = Long.parseLong(idFacturaEliminarStr);
 
-                    Factura facturaAEditar = facturaController.findFactura(idFacturaEditar);
-                    if (facturaAEditar != null) {
-                        System.out.print("Ingrese el nuevo monto total: ");
-                        BigDecimal nuevoMontoTotal = entrada.nextBigDecimal();
-                        facturaAEditar.setMontoTotal(nuevoMontoTotal);
-
-                        try {
-                            facturaController.edit(facturaAEditar);
-                            System.out.println("Factura actualizada exitosamente.");
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    } else {
-                        System.out.println("Factura no encontrada.");
+                        facturaController.delete(idFacturaEliminar);
+                        JOptionPane.showMessageDialog(null, "Factura eliminada exitosamente.");
+                    } catch (Exception e) {
+                        JOptionPane.showMessageDialog(null, "Error al eliminar la factura: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                     }
                     break;
 
                 case 4:
-                    // Eliminar factura
-                    System.out.print("Ingrese el ID de la factura a eliminar: ");
-                    Long idFacturaEliminar = entrada.nextLong();
-
-                    try {
-                        facturaController.delete(idFacturaEliminar);
-                        System.out.println("Factura eliminada exitosamente.");
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    break;
-
-                case 5:
-                    System.out.println("Saliendo...");
+                    // Salir
                     estado = false;
                     break;
 
                 default:
-                    System.out.println("Opción no válida.");
+                    JOptionPane.showMessageDialog(null, "Opción no válida.");
                     break;
             }
         }
     }
 
     //-----------------------------------------CRUD INVENTARIO------------------------------------------------------------------
-    
-        private static void crearInventario(Scanner scanner, InventarioJpaController inventarioController) {
-        Inventario inventario = new Inventario();
-        System.out.println("Ingrese el ID del inventario");
-        scanner.nextInt();
-        inventario.setIdInventario(Long.MIN_VALUE);
-        System.out.println("Ingrese el nombre del producto:");
-        inventario.setNombreProducto(scanner.nextLine());
-        scanner.nextLine();
-        System.out.println("Ingrese la cantidad del producto:");
-        inventario.setCantidad(scanner.nextInt());
-        
+    private static void createInventario() {
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.mycompany_prograll24Grupo7A_jar_1.0-SNAPSHOTPU");
+        inventarioController = new InventarioJpaController();  // Corregido
 
         try {
+            String nombreProducto = JOptionPane.showInputDialog(null, "Ingrese el nombre del producto:");
+            String cantidadStr = JOptionPane.showInputDialog(null, "Ingrese la cantidad:");
+            int cantidad = Integer.parseInt(cantidadStr);
+            String idVendedoresStr = JOptionPane.showInputDialog(null, "Ingrese el ID del vendedor:");
+            Long idVendedores = Long.parseLong(idVendedoresStr);
+
+            // Crear instancia de Inventario
+            Inventario inventario = new Inventario();
+            inventario.setNombreProducto(nombreProducto);
+            inventario.setCantidad(cantidad);
+
+            // Crear instancia de Vendedores
+            Vendedores vendedor = new Vendedores();
+            vendedor.setIdVendedores(idVendedores);
+
+            // Asignar vendedor al inventario
+            inventario.setVendedorId(vendedor);
+
+            // Crear inventario en la base de datos
             inventarioController.create(inventario);
-            System.out.println("Inventario creado con éxito.");
+            JOptionPane.showMessageDialog(null, "Inventario creado con éxito.");
         } catch (Exception e) {
-            System.out.println("Error al crear inventario: " + e.getMessage());
+            JOptionPane.showMessageDialog(null, "Error al crear el inventario: " + e.getMessage());
         }
     }
-    
-        private static void leerInventario(InventarioJpaController inventarioController) {
+
+    private static void findInventario() {
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.mycompany_prograll24Grupo7A_jar_1.0-SNAPSHOTPU");
+        inventarioController = new InventarioJpaController();
+
+        try {
+            String idStr = JOptionPane.showInputDialog(null, "Ingrese el ID del inventario:");
+            Long id = Long.parseLong(idStr);
+
+            Inventario inventario = inventarioController.findInventario(id);
+            if (inventario != null) {
+                String mensaje = String.format("ID: %d\nNombre del Producto: %s\nCantidad: %d\nID del Vendedor: %d",
+                        inventario.getIdInventario(), inventario.getNombreProducto(),
+                        inventario.getCantidad(), inventario.getVendedorId().getIdVendedores());
+                JOptionPane.showMessageDialog(null, mensaje);
+            } else {
+                JOptionPane.showMessageDialog(null, "Inventario no encontrado.");
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error al buscar el inventario: " + e.getMessage());
+        }
+    }
+
+    private static void updateInventario() {
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.mycompany_prograll24Grupo7A_jar_1.0-SNAPSHOTPU");
+        inventarioController = new InventarioJpaController();
+
+        try {
+            String idStr = JOptionPane.showInputDialog(null, "Ingrese el ID del inventario a actualizar:");
+            Long id = Long.parseLong(idStr);
+
+            Inventario inventario = inventarioController.findInventario(id);
+            if (inventario == null) {
+                JOptionPane.showMessageDialog(null, "Inventario no encontrado.");
+                return;
+            }
+
+            String nombreProducto = JOptionPane.showInputDialog(null, "Ingrese el nuevo nombre del producto:");
+            String cantidadStr = JOptionPane.showInputDialog(null, "Ingrese la nueva cantidad:");
+            int cantidad = Integer.parseInt(cantidadStr);
+
+            inventario.setNombreProducto(nombreProducto);
+            inventario.setCantidad(cantidad);
+
+            inventarioController.edit(inventario);
+            JOptionPane.showMessageDialog(null, "Inventario actualizado con éxito.");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error al actualizar el inventario: " + e.getMessage());
+        }
+    }
+
+    private static void deleteInventario() {
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.mycompany_prograll24Grupo7A_jar_1.0-SNAPSHOTPU");
+        inventarioController = new InventarioJpaController();
+
+        try {
+            String idStr = JOptionPane.showInputDialog(null, "Ingrese el ID del inventario a eliminar:");
+            Long id = Long.parseLong(idStr);
+
+            inventarioController.destroy(id);
+            JOptionPane.showMessageDialog(null, "Inventario eliminado con éxito.");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error al eliminar el inventario: " + e.getMessage());
+        }
+    }
+
+    private static void listInventarios() {
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.mycompany_prograll24Grupo7A_jar_1.0-SNAPSHOTPU");
+        inventarioController = new InventarioJpaController();
+
         List<Inventario> inventarios = inventarioController.findInventarioEntities();
         if (inventarios.isEmpty()) {
-            System.out.println("No hay inventarios disponibles.");
+            JOptionPane.showMessageDialog(null, "No hay inventarios disponibles.");
         } else {
-            System.out.println("Inventarios:");
+            StringBuilder sb = new StringBuilder();
+            sb.append("-- Lista de Inventarios --\n");
             for (Inventario inventario : inventarios) {
-                System.out.println("ID: " + inventario.getIdInventario() + ", Nombre: " + inventario.getNombreProducto() + 
-                                   ", Cantidad: " + inventario.getCantidad());
+                sb.append(String.format("ID: %d\nNombre del Producto: %s\nCantidad: %d\nID del Vendedor: %d\n-------------------------\n",
+                        inventario.getIdInventario(), inventario.getNombreProducto(),
+                        inventario.getCantidad(), inventario.getVendedorId().getIdVendedores()));
             }
+            JOptionPane.showMessageDialog(null, sb.toString());
         }
     }
-
-    private static void actualizarInventario(Scanner scanner, InventarioJpaController inventarioController) {
-        System.out.println("Ingrese el ID del inventario a actualizar:");
-        Long id = scanner.nextLong();
-        Inventario inventario = inventarioController.findInventario(id);
-
-        if (inventario == null) {
-            System.out.println("Inventario no encontrado.");
-            return;
-        }
-
-        System.out.println("Nombre actual: " + inventario.getNombreProducto());
-        System.out.println("Ingrese el nuevo nombre del producto :");
-        scanner.nextLine(); // Consumir la nueva línea
-        String nuevoNombre = scanner.nextLine();
-        if (!nuevoNombre.isEmpty()) {
-            inventario.setNombreProducto(nuevoNombre);
-        }
-
-        System.out.println("Cantidad actual: " + inventario.getCantidad());
-        System.out.println("Ingrese la nueva cantidad (deje vacío para no cambiar):");
-        String nuevaCantidadStr = scanner.nextLine();
-        if (!nuevaCantidadStr.isEmpty()) {
-            inventario.setCantidad(Integer.parseInt(nuevaCantidadStr));
-        }
-
-        try {
-            inventarioController.edit(inventario);
-            System.out.println("Inventario actualizado con éxito.");
-        } catch (Exception e) {
-            System.out.println("Error al actualizar inventario: " + e.getMessage());
-        }
-    }
-
-private static void eliminarInventario(Scanner scanner, InventarioJpaController inventarioController) {
-    System.out.println("Ingrese el ID del inventario a eliminar:");
-
-    // Asegurarse de que el ID se lea correctamente
-    Long idInventario = null;
-    try {
-        // Leer la siguiente línea y convertirla en un número Long
-        idInventario = scanner.nextLong();
-        
-    } catch (NumberFormatException e) {
-        System.out.println("Error: ID inválido. Debe ser un número.");
-        return;
-    }
-
-    // Intentar eliminar el inventario con el ID ingresado
-    try {
-        inventarioController.destroy(idInventario);
-        System.out.println("Inventario eliminado con éxito.");
-    } catch (Exception e) {
-        System.out.println("Error al eliminar inventario: " + e.getMessage());
-    }
-}
-
-
 
 //----------------------------------------------------CRUD ROL------------------------------------------------------------------------    
-    
     public static void create_rol() {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.mycompany_prograll24Grupo7A_jar_1.0-SNAPSHOTPU");
 
@@ -547,9 +586,8 @@ private static void eliminarInventario(Scanner scanner, InventarioJpaController 
         emf.close();
         entrada.close();
     }
-    
-//-----------------------------------------------CRUD USUARIO---------------------------------------------------------------------    
 
+//-----------------------------------------------CRUD USUARIO---------------------------------------------------------------------    
     public static void create_usuario() {
         // Crear el EntityManagerFactory 
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.mycompany_prograll24Grupo7A_jar_1.0-SNAPSHOTPU");
@@ -596,254 +634,97 @@ private static void eliminarInventario(Scanner scanner, InventarioJpaController 
 
     }
 //-----------------------------------------------------------------CRUD VENDEDORES---------------------------------------------------    
-    
-    public static void create_vendedores() {
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.mycompany_prograll24Grupo7A_jar_1.0-SNAPSHOTPU");
-        VendedoresJpaController vendedoresController = new VendedoresJpaController();
 
-        // Menú de opciones
-        boolean salir = false;
-        while (!salir) {
-            System.out.println("---- Menú CRUD Vendedores ----");
-            System.out.println("1. Crear nuevo Vendedor");
-            System.out.println("2. Ver todos los Vendedores");
-            System.out.println("3. Actualizar Vendedor");
-            System.out.println("4. Eliminar Vendedor");
-            System.out.println("5. Salir");
-            System.out.print("Selecciona una opción: ");
-            int opcion = entrada.nextInt();
-            entrada.nextLine();  // Consumir el salto de línea
+public static void create_vendedores() {
+    EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.mycompany_prograll24Grupo7A_jar_1.0-SNAPSHOTPU");
+    VendedoresJpaController vendedoresController = new VendedoresJpaController();
 
-            switch (opcion) {
-                case 1:
-                    // Crear nuevo Vendedor
-                    System.out.print("Introduce el nombre del vendedor: ");
-                    String nombre = entrada.nextLine();
-                    entrada.nextLine();
-                    System.out.print("Introduce el correo del vendedor: ");
-                    String correo = entrada.nextLine();
+    // Menú de opciones
+    boolean salir = false;
+    while (!salir) {
+        String[] options = {"Crear nuevo Vendedor", "Ver todos los Vendedores", "Actualizar Vendedor", "Eliminar Vendedor", "Salir"};
+        int opcion = JOptionPane.showOptionDialog(null, "Selecciona una opción", "Menú CRUD Vendedores",
+                JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
 
-                    Vendedores nuevoVendedor = new Vendedores();
-                    nuevoVendedor.setNombre(nombre);
-                    nuevoVendedor.setCorreo(correo);
+        switch (opcion) {
+            case 0: // Crear nuevo Vendedor
+                String nombre = JOptionPane.showInputDialog("Introduce el nombre del vendedor:");
+                String correo = JOptionPane.showInputDialog("Introduce el correo del vendedor:");
 
-                    // Guardar el vendedor en la base de datos
+                Vendedores nuevoVendedor = new Vendedores();
+                nuevoVendedor.setNombre(nombre);
+                nuevoVendedor.setCorreo(correo);
+
+                // Guardar el vendedor en la base de datos
+                try {
                     vendedoresController.create(nuevoVendedor);
-                    System.out.println("Vendedor creado con éxito.\n");
-                    break;
+                    JOptionPane.showMessageDialog(null, "Vendedor creado con éxito.");
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(null, "Error al crear vendedor: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                }
+                break;
 
-                case 2:
-                    // Leer todos los vendedores
-                    System.out.println("---- Lista de Vendedores ----");
-                    for (Vendedores v : vendedoresController.findVendedoresEntities()) {
-                        System.out.println("ID: " + v.getIdVendedores() + " - Nombre: " + v.getNombre() + " - Correo: " + v.getCorreo());
-                    }
-                    System.out.println("-------------------------------\n");
-                    break;
+            case 1: // Ver todos los Vendedores
+                StringBuilder vendedoresList = new StringBuilder("---- Lista de Vendedores ----\n");
+                for (Vendedores v : vendedoresController.findVendedoresEntities()) {
+                    vendedoresList.append("ID: ").append(v.getIdVendedores()).append(" - Nombre: ")
+                            .append(v.getNombre()).append(" - Correo: ").append(v.getCorreo()).append("\n");
+                }
+                JOptionPane.showMessageDialog(null, vendedoresList.toString());
+                break;
 
-                case 3:
-                    // Actualizar un vendedor existente
-                    System.out.print("Introduce el ID del vendedor que deseas actualizar: ");
-                    Long idUpdate = entrada.nextLong();
-                    entrada.nextLine();  // Consumir el salto de línea
-                    Vendedores vendedorActualizar = vendedoresController.findVendedor(idUpdate);
+            case 2: // Actualizar Vendedor
+                String idUpdateStr = JOptionPane.showInputDialog("Introduce el ID del vendedor que deseas actualizar:");
+                Long idUpdate = Long.parseLong(idUpdateStr);
 
-                    if (vendedorActualizar != null) {
-                        System.out.print("Nuevo nombre: ");
-                        String nuevoNombre = entrada.nextLine();
-                        System.out.print("Nuevo correo: ");
-                        String nuevoCorreo = entrada.nextLine();
+                Vendedores vendedorActualizar = vendedoresController.findVendedor(idUpdate);
+                if (vendedorActualizar != null) {
+                    String nuevoNombre = JOptionPane.showInputDialog("Nuevo nombre:", vendedorActualizar.getNombre());
+                    String nuevoCorreo = JOptionPane.showInputDialog("Nuevo correo:", vendedorActualizar.getCorreo());
 
-                        vendedorActualizar.setNombre(nuevoNombre);
-                        vendedorActualizar.setCorreo(nuevoCorreo);
-
-                        try {
-                            vendedoresController.edit(vendedorActualizar);
-                            System.out.println("Vendedor actualizado con éxito.\n");
-                        } catch (Exception e) {
-                            System.out.println("Error al actualizar vendedor: " + e.getMessage());
-                        }
-                    } else {
-                        System.out.println("Vendedor no encontrado.\n");
-                    }
-                    break;
-
-                case 4:
-                    // Eliminar un vendedor
-                    System.out.print("Introduce el ID del vendedor que deseas eliminar: ");
-                    Long idDelete = entrada.nextLong();
-                    entrada.nextLine();  // Consumir el salto de línea
+                    vendedorActualizar.setNombre(nuevoNombre);
+                    vendedorActualizar.setCorreo(nuevoCorreo);
 
                     try {
-                        vendedoresController.destroy(idDelete);
-                        System.out.println("Vendedor eliminado con éxito.\n");
+                        vendedoresController.edit(vendedorActualizar);
+                        JOptionPane.showMessageDialog(null, "Vendedor actualizado con éxito.");
                     } catch (Exception e) {
-                        System.out.println("Error al eliminar vendedor: " + e.getMessage());
+                        JOptionPane.showMessageDialog(null, "Error al actualizar vendedor: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                     }
-                    break;
+                } else {
+                    JOptionPane.showMessageDialog(null, "Vendedor no encontrado.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+                break;
 
-                case 5:
-                    // Salir del programa
-                    salir = true;
-                    break;
+            case 3: // Eliminar Vendedor
+                String idDeleteStr = JOptionPane.showInputDialog("Introduce el ID del vendedor que deseas eliminar:");
+                Long idDelete = Long.parseLong(idDeleteStr);
 
-                default:
-                    System.out.println("Opción no válida. Inténtalo de nuevo.\n");
-                    break;
-            }
+                try {
+                    vendedoresController.destroy(idDelete);
+                    JOptionPane.showMessageDialog(null, "Vendedor eliminado con éxito.");
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(null, "Error al eliminar vendedor: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                }
+                break;
+
+            case 4: // Salir
+                salir = true;
+                break;
+
+            default:
+                JOptionPane.showMessageDialog(null, "Opción no válida.");
+                break;
         }
-
-        entrada.close();
     }
+}
+
 
 //-----------------------------------------------------CRUD VENTAS-----------------------------------------------------------------    
-    
     static VentasJpaController ventasController = new VentasJpaController();
-    public static void create_ventas() {
-        // Crear el EntityManagerFactory 
-        
+    
+    
 
-         
-        boolean running = true;
-
-        while (running) {
-            String opcion = JOptionPane.showInputDialog(null, 
-                    "=== Menú de Ventas ===\n"
-                    + "1. Crear Venta\n"
-                    + "2. Leer Venta\n"
-                    + "3. Actualizar Venta\n"
-                    + "4. Eliminar Venta\n"
-                    + "5. Listar todas las Ventas\n"
-                    + "6. Salir\n\n"
-                    + "Elige una opción:");
-
-            if (opcion == null) {
-                running = false;
-                break;
-            }
-
-            switch (opcion) {
-                case "1":
-                    crearVenta();
-                    break;
-                case "2":
-                    leerVenta();
-                    break;
-                case "3":
-                    actualizarVenta();
-                    break;
-                case "4":
-                    eliminarVenta();
-                    break;
-                case "5":
-                    listarVentas();
-                    break;
-                case "6":
-                    running = false;
-                    break;
-                default:
-                    JOptionPane.showMessageDialog(null, "Opción inválida, intenta de nuevo.");
-            }
-        }
-    }
-
-    private static void crearVenta() {
-        try {
-            int cantidad = Integer.parseInt(JOptionPane.showInputDialog("Ingrese cantidad:"));
-            BigDecimal precio = new BigDecimal(JOptionPane.showInputDialog("Ingrese precio:"));
-
-            Long facturaId = Long.parseLong(JOptionPane.showInputDialog("Ingrese ID de la Factura:"));
-            Factura factura = ventasController.getEntityManager().find(Factura.class, facturaId);
-
-            Long productoId = Long.parseLong(JOptionPane.showInputDialog("Ingrese ID del Producto (Inventario):"));
-            Inventario inventario = ventasController.getEntityManager().find(Inventario.class, productoId);
-
-            if (factura != null && inventario != null) {
-                Ventas nuevaVenta = new Ventas();
-                nuevaVenta.setCantidad(cantidad);
-                nuevaVenta.setPrecio(precio);
-                nuevaVenta.setFacturaId(factura);
-                nuevaVenta.setProductoId(inventario);
-
-                ventasController.create(nuevaVenta);
-                JOptionPane.showMessageDialog(null, "Venta creada con éxito:\n" + nuevaVenta);
-            } else {
-                JOptionPane.showMessageDialog(null, "Factura o Producto no encontrados.");
-            }
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Error al crear la venta: " + e.getMessage());
-        }
-    }
-
-    private static void leerVenta() {
-        try {
-            Long id = Long.parseLong(JOptionPane.showInputDialog("Ingrese ID de la Venta a leer:"));
-            Ventas venta = ventasController.findVentas(id);
-
-            if (venta != null) {
-                JOptionPane.showMessageDialog(null, "Venta encontrada:\n" + venta);
-            } else {
-                JOptionPane.showMessageDialog(null, "Venta no encontrada.");
-            }
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Error al leer la venta: " + e.getMessage());
-        }
-    }
-
-    private static void actualizarVenta() {
-        try {
-            Long id = Long.parseLong(JOptionPane.showInputDialog("Ingrese ID de la Venta a actualizar:"));
-            Ventas venta = ventasController.findVentas(id);
-
-            if (venta != null) {
-                int cantidad = Integer.parseInt(JOptionPane.showInputDialog("Nueva cantidad:"));
-                BigDecimal precio = new BigDecimal(JOptionPane.showInputDialog("Nuevo precio:"));
-
-                Long facturaId = Long.parseLong(JOptionPane.showInputDialog("Ingrese nuevo ID de la Factura:"));
-                Factura factura = ventasController.getEntityManager().find(Factura.class, facturaId);
-
-                Long productoId = Long.parseLong(JOptionPane.showInputDialog("Ingrese nuevo ID del Producto (Inventario):"));
-                Inventario inventario = ventasController.getEntityManager().find(Inventario.class, productoId);
-
-                if (factura != null && inventario != null) {
-                    venta.setCantidad(cantidad);
-                    venta.setPrecio(precio);
-                    venta.setFacturaId(factura);
-                    venta.setProductoId(inventario);
-
-                    ventasController.edit(venta);
-                    JOptionPane.showMessageDialog(null, "Venta actualizada con éxito:\n" + venta);
-                } else {
-                    JOptionPane.showMessageDialog(null, "Factura o Producto no encontrados.");
-                }
-            } else {
-                JOptionPane.showMessageDialog(null, "Venta no encontrada.");
-            }
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Error al actualizar la venta: " + e.getMessage());
-        }
-    }
-
-    private static void eliminarVenta() {
-        try {
-            Long id = Long.parseLong(JOptionPane.showInputDialog("Ingrese ID de la Venta a eliminar:"));
-            ventasController.destroy(id);
-            JOptionPane.showMessageDialog(null, "Venta eliminada con éxito.");
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Error al eliminar la venta: " + e.getMessage());
-        }
-    }
-
-    private static void listarVentas() {
-        List<Ventas> ventasList = ventasController.findVentasEntities();
-        if (!ventasList.isEmpty()) {
-            StringBuilder listado = new StringBuilder("=== Listado de Ventas ===\n");
-            for (Ventas venta : ventasList) {
-                listado.append(venta).append("\n");
-            }
-            JOptionPane.showMessageDialog(null, listado.toString());
-        } else {
-            JOptionPane.showMessageDialog(null, "No se encontraron ventas.");
-        }
-    }
-    }
+    /* -------------- INICIAR SESION -------------- */
+    
+}

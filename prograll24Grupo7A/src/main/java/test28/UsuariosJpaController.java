@@ -5,6 +5,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityNotFoundException;
+import javax.persistence.Persistence;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
@@ -15,8 +16,47 @@ import test28.exceptions.NonexistentEntityException;
  */
 public class UsuariosJpaController implements Serializable {
 
+    public List<Object[]> findUsuariosWithRoles() {
+        EntityManager em = getEntityManager();
+        try {
+            // Consulta JPQL que hace un JOIN entre Usuarios y Roles
+            Query query = em.createQuery(
+                "SELECT u, r FROM Usuarios u JOIN u.rol r");
+            return query.getResultList();
+        } finally {
+            em.close();
+        }
+    }
+    
+    
+    public Usuarios findByUsuarioAndContrasena(String correo, String contrasena) {
+    EntityManager em = getEntityManager();
+    try {
+        // Consulta JPQL para buscar el usuario con correo y contraseña
+        Query query = em.createQuery("SELECT u FROM Usuarios u WHERE u.correo = :correo AND u.password = :contrasena");
+        query.setParameter("correo", correo);
+        query.setParameter("contrasena", contrasena);
+        
+        // Intenta obtener un único resultado
+        try {
+            return (Usuarios) query.getSingleResult();
+        } catch (Exception e) {
+            // Si no se encuentra ningún usuario, devolver null
+            return null;
+        }
+    } finally {
+        em.close();
+    }
+}
+    
     private EntityManagerFactory emf = null;
 
+    // Constructor predeterminado que inicializa el EntityManagerFactory
+    public UsuariosJpaController() {
+        this.emf = Persistence.createEntityManagerFactory("com.mycompany_prograll24Grupo7A_jar_1.0-SNAPSHOTPU");
+    }
+
+    // Constructor que permite inyectar el EntityManagerFactory
     public UsuariosJpaController(EntityManagerFactory emf) {
         this.emf = emf;
     }
@@ -137,4 +177,6 @@ public class UsuariosJpaController implements Serializable {
             }
         }
     }
+
+    
 }

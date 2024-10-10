@@ -7,11 +7,11 @@ import javax.persistence.TypedQuery;
 import java.util.List;
 
 public class InventarioJpaController {
-    
-    private EntityManagerFactory emf;
+
+    private EntityManagerFactory emf = null;
 
     public InventarioJpaController() {
-        this.emf = Persistence.createEntityManagerFactory("com.mycompany_prograll24Grupo7A_jar_1.0-SNAPSHOTPU"); 
+        this.emf = Persistence.createEntityManagerFactory("com.mycompany_prograll24Grupo7A_jar_1.0-SNAPSHOTPU");
     }
 
     private EntityManager getEntityManager() {

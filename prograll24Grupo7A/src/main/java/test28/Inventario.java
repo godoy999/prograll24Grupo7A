@@ -5,9 +5,7 @@
 package test28;
 
 import java.io.Serializable;
-import java.util.List;
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -18,7 +16,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 /**
@@ -43,9 +40,7 @@ public class Inventario implements Serializable {
     @Basic(optional = false)
     @Column(name = "cantidad", nullable = false)
     private int cantidad;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "productoId", fetch = FetchType.LAZY)
-    private List<Ventas> ventasList;
-    @JoinColumn(name = "id_vendedores", referencedColumnName = "id_vendedores", nullable = false)
+    @JoinColumn(name = "vendedor_id", referencedColumnName = "id_vendedores", nullable = false)
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Vendedores vendedorId;
 
@@ -86,20 +81,12 @@ public class Inventario implements Serializable {
         this.cantidad = cantidad;
     }
 
-    public List<Ventas> getVentasList() {
-        return ventasList;
-    }
-
-    public void setVentasList(List<Ventas> ventasList) {
-        this.ventasList = ventasList;
-    }
-
-    public Vendedores getvendedorId(){
+    public Vendedores getVendedorId() {
         return vendedorId;
     }
 
-    public void setVendedorId(Vendedores id_vendedores) {
-        this.vendedorId = id_vendedores;
+    public void setVendedorId(Vendedores vendedorId) {
+        this.vendedorId = vendedorId;
     }
 
     @Override
@@ -124,7 +111,7 @@ public class Inventario implements Serializable {
 
     @Override
     public String toString() {
-        return "[ idInventario=" + idInventario + " ]";
+        return "test28.Inventario[ idInventario=" + idInventario + " ]";
     }
     
 }

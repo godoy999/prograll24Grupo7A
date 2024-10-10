@@ -23,7 +23,15 @@ public class RolesJpaController implements Serializable {
     public RolesJpaController(EntityManagerFactory emf) {
         this.emf = emf;
     }
-    
+    public Roles findRol(Long id) {
+    EntityManager em = getEntityManager();
+    try {
+        return em.find(Roles.class, id);
+    } finally {
+        em.close();
+    }
+}
+
     public RolesJpaController() {
         this.emf = Persistence.createEntityManagerFactory("com.mycompany_prograll24Grupo7A_jar_1.0-SNAPSHOTPU");
     }
