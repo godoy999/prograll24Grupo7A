@@ -52,7 +52,31 @@ public class Proyecto {
     }
     //------------------------------------------------LOGIN------------------------------------------------------------   
 
-    
+    public static void login() {
+        String[] opciones = {"Iniciar sesión", "Registrar usuario"};
+
+        // Mostrar el JOptionPane con las opciones
+        int seleccion = JOptionPane.showOptionDialog(
+                null,
+                "Seleccione una opción:",
+                "Opciones",
+                JOptionPane.DEFAULT_OPTION,
+                JOptionPane.INFORMATION_MESSAGE,
+                null,
+                opciones,
+                opciones[0]);
+        if (seleccion == 0) {
+            iniciarSesion();
+            menu();
+        } else if (seleccion == 1) {
+            registrarUsuario();
+            login();
+        } else {
+            JOptionPane.showMessageDialog(null, "No seleccionaste ninguna opción.");
+            System.exit(0);
+        }
+
+    }
 
     public static void menu() {
 
@@ -726,5 +750,92 @@ public static void create_vendedores() {
     
 
     /* -------------- INICIAR SESION -------------- */
-    
+    public static void iniciarSesion() {
+        JTextField usuarioField = new JTextField();
+        JTextField contrasenaField = new JPasswordField();
+
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.add(new JLabel("Correo:"));
+        panel.add(usuarioField);
+        panel.add(Box.createVerticalStrut(10));
+        panel.add(new JLabel("Contraseña:"));
+        panel.add(contrasenaField);
+        int result = JOptionPane.showConfirmDialog(null, panel, "Iniciar sesión", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+        if (result == JOptionPane.OK_OPTION) {
+            EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.mycompany_prograll24Grupo7A_jar_1.0-SNAPSHOTPU");
+            UsuariosJpaController usuarioController = new UsuariosJpaController(emf);
+            String correo = usuarioField.getText();
+            String contrasena = contrasenaField.getText();
+            Usuarios usuario = usuarioController.findByUsuarioAndContrasena(correo, contrasena);
+            if (usuario == null) {
+                JOptionPane.showMessageDialog(null, "Usuario invalido");
+                System.exit(0);
+            } else {
+                JOptionPane.showMessageDialog(null, "Bienvenido " + usuario.getNombre());
+
+            }
+
+        } else {
+            JOptionPane.showMessageDialog(null, "Operación cancelada.");
+            System.exit(0);
+        }
+
+    }
+
+    /* ----------------- REGISTRAR USUARIO -----------------*/
+    public static void registrarUsuario() {
+        JPanel panel = new JPanel();
+        JTextField nombreField = new JTextField(20);
+        JTextField correoField = new JTextField(20);
+        JPasswordField passwordField = new JPasswordField(20);
+
+        panel.add(new JLabel("Nombre:"));
+        panel.add(nombreField);
+        panel.add(new JLabel("Correo:"));
+        panel.add(correoField);
+        panel.add(new JLabel("Contraseña:"));
+        panel.add(passwordField);
+
+        int option = JOptionPane.showConfirmDialog(null, panel, "Registrar Usuario", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+
+        if (option == JOptionPane.OK_OPTION) {
+            String nombre = nombreField.getText();
+            String correo = correoField.getText();
+            String password = new String(passwordField.getPassword());
+
+            if (nombre.isEmpty() || correo.isEmpty() || password.isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Todos los campos son obligatorios.", "Error", JOptionPane.ERROR_MESSAGE);
+                System.exit(0);
+            }
+
+            Usuarios nuevoUsuario = new Usuarios();
+            nuevoUsuario.setNombre(nombre);
+            nuevoUsuario.setCorreo(correo);
+            nuevoUsuario.setPassword(password);
+
+            // Crear el EntityManagerFactory
+            EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.mycompany_prograll24Grupo7A_jar_1.0-SNAPSHOTPU");
+            RolesJpaController rolesJpaController = new RolesJpaController(emf);
+
+            // Busca el rol en la base de datos (por ejemplo, el rol con ID 1)
+            Roles rol = rolesJpaController.findRol(1L);
+
+            if (rol != null) {
+                nuevoUsuario.setRol(rol);
+
+                try {
+                    UsuariosJpaController usuariosJpaController = new UsuariosJpaController(emf);
+                    usuariosJpaController.create(nuevoUsuario);
+                    JOptionPane.showMessageDialog(null, "Usuario registrado exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(null, "Error al registrar el usuario: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            } else {
+                JOptionPane.showMessageDialog(null, "El rol especificado no existe.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+
+            emf.close();
+        }
+    }
 }
