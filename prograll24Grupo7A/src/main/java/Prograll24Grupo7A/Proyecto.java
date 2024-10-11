@@ -47,8 +47,8 @@ public class Proyecto {
 
     public static void main(String[] args) {
         
-        login();
-        //menu();
+        //login();
+        menu();
     }
     //------------------------------------------------LOGIN------------------------------------------------------------   
 
@@ -358,12 +358,15 @@ public class Proyecto {
         boolean estado = true;
 
         while (estado) {
-            String[] opciones = {"Crear nueva factura", "Buscar factura por ID", "Editar factura", "Eliminar factura", "Salir"};
-            int opcion = JOptionPane.showOptionDialog(null, "Selecciona una opción:", "Menú de Facturas",
-                    JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, opciones, opciones[0]);
+            String menuOptions = "1. Crear Factura\n2. Buscar Factura\n3. Editar Factura\n4. Eliminar Factura\n5. Salir";
+        String opcionStr = JOptionPane.showInputDialog(null, menuOptions, "Menú de Facturas", JOptionPane.QUESTION_MESSAGE);
+
+        try {
+            int opcion = Integer.parseInt(opcionStr); 
+                   
 
             switch (opcion) {
-                case 0:
+                case 1:
                     // Crear nueva factura
                     try {
                         String clienteIdStr = JOptionPane.showInputDialog("Ingrese el ID del cliente:");
@@ -390,7 +393,7 @@ public class Proyecto {
                     }
                     break;
 
-                case 1:
+                case 2:
                     // Buscar factura por ID
                     try {
                         String idFacturaStr = JOptionPane.showInputDialog("Ingrese el ID de la factura:");
@@ -412,7 +415,7 @@ public class Proyecto {
                     }
                     break;
 
-                case 2:
+                case 3:
                     // Editar factura
                     try {
                         String idFacturaEditarStr = JOptionPane.showInputDialog("Ingrese el ID de la factura a editar:");
@@ -434,7 +437,7 @@ public class Proyecto {
                     }
                     break;
 
-                case 3:
+                case 4:
                     // Eliminar factura
                     try {
                         String idFacturaEliminarStr = JOptionPane.showInputDialog("Ingrese el ID de la factura a eliminar:");
@@ -447,7 +450,7 @@ public class Proyecto {
                     }
                     break;
 
-                case 4:
+                case 5:
                     // Salir
                     estado = false;
                     break;
@@ -456,6 +459,9 @@ public class Proyecto {
                     JOptionPane.showMessageDialog(null, "Opción no válida.");
                     break;
             }
+            } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(null, "Debe ingresar un número válido.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
         }
     }
 
@@ -572,44 +578,59 @@ public class Proyecto {
                         inventario.getCantidad(), inventario.getVendedorId().getIdVendedores()));
             }
             JOptionPane.showMessageDialog(null, sb.toString());
+            
         }
     }
 //----------------------------------------------------CRUD ROL------------------------------------------------------------------------    
     private static RolesJpaController rolesController = new RolesJpaController();
 
     public static void create_menu_rol() {
+    boolean continuar = true;
 
-        boolean continuar = true;
+    while (continuar) {
+        String menu = "Seleccione una opción:\n" +
+                      "1. Crear Rol\n" +
+                      "2. Leer Todos\n" +
+                      "3. Actualizar Rol\n" +
+                      "4. Eliminar Rol\n" +
+                      "5. Salir";
 
-        while (continuar) {
-            String[] opciones = {"Crear Rol", "Leer Todos", "Actualizar Rol", "Eliminar Rol", "Salir"};
-            String seleccion = (String) JOptionPane.showInputDialog(null, "Seleccione una opción", "CRUD Roles",
-                    JOptionPane.QUESTION_MESSAGE, null, opciones, opciones[0]);
+        String seleccion = JOptionPane.showInputDialog(null, menu, "CRUD Roles", JOptionPane.QUESTION_MESSAGE);
 
-            if (seleccion == null || seleccion.equals("Salir")) {
-                continuar = false;
-                continue;
-            }
+        if (seleccion == null) { // Si presiona cancelar
+            continuar = false;
+            continue;
+        }
 
-            switch (seleccion) {
-                case "Crear Rol":
+        try {
+            int opcion = Integer.parseInt(seleccion);
+
+            switch (opcion) {
+                case 1:
                     create_rol();
                     break;
-                case "Leer Todos":
+                case 2:
                     list_roles();
                     break;
-                case "Actualizar Rol":
+                case 3:
                     update_rol();
                     break;
-                case "Eliminar Rol":
+                case 4:
                     delete_rol();
+                    break;
+                case 5:
+                    continuar = false;
                     break;
                 default:
                     JOptionPane.showMessageDialog(null, "Opción no válida.");
                     break;
             }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(null, "Por favor ingrese un número válido.");
         }
     }
+}
+
 
     // Crear nuevo rol
     public static void create_rol() {
@@ -686,39 +707,56 @@ public class Proyecto {
 
     public static void create_menu_u() {
 
-        // Crear el EntityManagerFactory 
-        emf = Persistence.createEntityManagerFactory("com.mycompany_prograll24Grupo7A_jar_1.0-SNAPSHOTPU");
-        usuariosController = new UsuariosJpaController(emf);
+    // Crear el EntityManagerFactory 
+    emf = Persistence.createEntityManagerFactory("com.mycompany_prograll24Grupo7A_jar_1.0-SNAPSHOTPU");
+    usuariosController = new UsuariosJpaController(emf);
 
-        boolean continuar = true;
-        while (continuar) {
-            String[] opciones = {"Crear", "Leer", "Actualizar", "Eliminar", "Salir"};
-            int seleccion = JOptionPane.showOptionDialog(null, "Seleccione una operación", "CRUD Usuarios",
-                    JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, opciones, opciones[0]);
+    boolean continuar = true;
+    while (continuar) {
+        String menu = "Seleccione una operación:\n"
+                    + "1. Crear\n"
+                    + "2. Leer\n"
+                    + "3. Actualizar\n"
+                    + "4. Eliminar\n"
+                    + "5. Salir";
 
-            switch (seleccion) {
-                case 1:
-                    create_usuario();
-                    break;
-                case 2:
-                    list_usuarios();
-                    break;
-                case 3:
-                    update_usuario();
-                    break;
-                case 4:
-                    delete_usuario();
-                    break;
-                case 5:
-                    continuar = false;
-                    JOptionPane.showInputDialog(null, "Regresando al menu Principal!!");
-                    menu();
-                    break;
-                default:
-                    break;
+        String seleccion = JOptionPane.showInputDialog(null, menu, "CRUD Usuarios", JOptionPane.QUESTION_MESSAGE);
+
+        if (seleccion != null) {
+            try {
+                int opcion = Integer.parseInt(seleccion);
+
+                switch (opcion) {
+                    case 1:
+                        create_usuario();
+                        break;
+                    case 2:
+                        list_usuarios();
+                        break;
+                    case 3:
+                        update_usuario();
+                        break;
+                    case 4:
+                        delete_usuario();
+                        break;
+                    case 5:
+                        continuar = false;
+                        JOptionPane.showMessageDialog(null, "Regresando al menú Principal!!");
+                        menu();
+                        break;
+                    default:
+                        JOptionPane.showMessageDialog(null, "Opción no válida. Intente de nuevo.");
+                        break;
+                }
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(null, "Entrada no válida. Por favor, ingrese un número.");
             }
+        } else {
+            continuar = false; // Cierra el menú si el usuario cancela el diálogo
         }
     }
+}
+
 
     // Método para crear un usuario
     private static void create_usuario() {
@@ -799,91 +837,105 @@ public class Proyecto {
 //-----------------------------------------------------------------CRUD VENDEDORES---------------------------------------------------    
 
     public static void create_vendedores() {
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.mycompany_prograll24Grupo7A_jar_1.0-SNAPSHOTPU");
-        VendedoresJpaController vendedoresController = new VendedoresJpaController();
+    EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.mycompany_prograll24Grupo7A_jar_1.0-SNAPSHOTPU");
+    VendedoresJpaController vendedoresController = new VendedoresJpaController();
 
-        // Menú de opciones
-        boolean salir = false;
-        while (!salir) {
-            String[] options = {"Crear nuevo Vendedor", "Ver todos los Vendedores", "Actualizar Vendedor", "Eliminar Vendedor", "Salir"};
-            int opcion = JOptionPane.showOptionDialog(null, "Selecciona una opción", "Menú CRUD Vendedores",
-                    JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+    // Menú de opciones
+    boolean salir = false;
+    while (!salir) {
+        String menu = "---- Menú CRUD Vendedores ----\n"
+                    + "1. Crear nuevo Vendedor\n"
+                    + "2. Ver todos los Vendedores\n"
+                    + "3. Actualizar Vendedor\n"
+                    + "4. Eliminar Vendedor\n"
+                    + "5. Salir\n"
+                    + "Selecciona una opción:";
+        
+        String opcionStr = JOptionPane.showInputDialog(menu);
+        int opcion;
+        
+        try {
+            opcion = Integer.parseInt(opcionStr);  // Convertimos la opción a número
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(null, "Por favor, ingresa un número válido.", "Error", JOptionPane.ERROR_MESSAGE);
+            continue; // Si no es un número válido, vuelve a mostrar el menú
+        }
 
-            switch (opcion) {
-                case 1: // Crear nuevo Vendedor
-                    String nombre = JOptionPane.showInputDialog("Introduce el nombre del vendedor:");
-                    String correo = JOptionPane.showInputDialog("Introduce el correo del vendedor:");
+        switch (opcion) {
+            case 1: // Crear nuevo Vendedor
+                String nombre = JOptionPane.showInputDialog("Introduce el nombre del vendedor:");
+                String correo = JOptionPane.showInputDialog("Introduce el correo del vendedor:");
 
-                    Vendedores nuevoVendedor = new Vendedores();
-                    nuevoVendedor.setNombre(nombre);
-                    nuevoVendedor.setCorreo(correo);
+                Vendedores nuevoVendedor = new Vendedores();
+                nuevoVendedor.setNombre(nombre);
+                nuevoVendedor.setCorreo(correo);
 
-                    // Guardar el vendedor en la base de datos
+                // Guardar el vendedor en la base de datos
+                try {
+                    vendedoresController.create(nuevoVendedor);
+                    JOptionPane.showMessageDialog(null, "Vendedor creado con éxito.");
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(null, "Error al crear vendedor: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                }
+                break;
+
+            case 2: // Ver todos los Vendedores
+                StringBuilder vendedoresList = new StringBuilder("---- Lista de Vendedores ----\n");
+                for (Vendedores v : vendedoresController.findVendedoresEntities()) {
+                    vendedoresList.append("ID: ").append(v.getIdVendedores()).append(" - Nombre: ")
+                            .append(v.getNombre()).append(" - Correo: ").append(v.getCorreo()).append("\n");
+                }
+                JOptionPane.showMessageDialog(null, vendedoresList.toString());
+                break;
+
+            case 3: // Actualizar Vendedor
+                String idUpdateStr = JOptionPane.showInputDialog("Introduce el ID del vendedor que deseas actualizar:");
+                Long idUpdate = Long.parseLong(idUpdateStr);
+
+                Vendedores vendedorActualizar = vendedoresController.findVendedor(idUpdate);
+                if (vendedorActualizar != null) {
+                    String nuevoNombre = JOptionPane.showInputDialog("Nuevo nombre:", vendedorActualizar.getNombre());
+                    String nuevoCorreo = JOptionPane.showInputDialog("Nuevo correo:", vendedorActualizar.getCorreo());
+
+                    vendedorActualizar.setNombre(nuevoNombre);
+                    vendedorActualizar.setCorreo(nuevoCorreo);
+
                     try {
-                        vendedoresController.create(nuevoVendedor);
-                        JOptionPane.showMessageDialog(null, "Vendedor creado con éxito.");
+                        vendedoresController.edit(vendedorActualizar);
+                        JOptionPane.showMessageDialog(null, "Vendedor actualizado con éxito.");
                     } catch (Exception e) {
-                        JOptionPane.showMessageDialog(null, "Error al crear vendedor: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(null, "Error al actualizar vendedor: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                     }
-                    break;
+                } else {
+                    JOptionPane.showMessageDialog(null, "Vendedor no encontrado.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+                break;
 
-                case 2: // Ver todos los Vendedores
-                    StringBuilder vendedoresList = new StringBuilder("---- Lista de Vendedores ----\n");
-                    for (Vendedores v : vendedoresController.findVendedoresEntities()) {
-                        vendedoresList.append("ID: ").append(v.getIdVendedores()).append(" - Nombre: ")
-                                .append(v.getNombre()).append(" - Correo: ").append(v.getCorreo()).append("\n");
-                    }
-                    JOptionPane.showMessageDialog(null, vendedoresList.toString());
-                    break;
+            case 4: // Eliminar Vendedor
+                String idDeleteStr = JOptionPane.showInputDialog("Introduce el ID del vendedor que deseas eliminar:");
+                Long idDelete = Long.parseLong(idDeleteStr);
 
-                case 3: // Actualizar Vendedor
-                    String idUpdateStr = JOptionPane.showInputDialog("Introduce el ID del vendedor que deseas actualizar:");
-                    Long idUpdate = Long.parseLong(idUpdateStr);
+                try {
+                    vendedoresController.destroy(idDelete);
+                    JOptionPane.showMessageDialog(null, "Vendedor eliminado con éxito.");
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(null, "Error al eliminar vendedor: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                }
+                break;
 
-                    Vendedores vendedorActualizar = vendedoresController.findVendedor(idUpdate);
-                    if (vendedorActualizar != null) {
-                        String nuevoNombre = JOptionPane.showInputDialog("Nuevo nombre:", vendedorActualizar.getNombre());
-                        String nuevoCorreo = JOptionPane.showInputDialog("Nuevo correo:", vendedorActualizar.getCorreo());
+            case 5: // Salir
+                salir = true;
+                JOptionPane.showMessageDialog(null, "Regresando al menú principal.");
+                menu();
+                break;
 
-                        vendedorActualizar.setNombre(nuevoNombre);
-                        vendedorActualizar.setCorreo(nuevoCorreo);
-
-                        try {
-                            vendedoresController.edit(vendedorActualizar);
-                            JOptionPane.showMessageDialog(null, "Vendedor actualizado con éxito.");
-                        } catch (Exception e) {
-                            JOptionPane.showMessageDialog(null, "Error al actualizar vendedor: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-                        }
-                    } else {
-                        JOptionPane.showMessageDialog(null, "Vendedor no encontrado.", "Error", JOptionPane.ERROR_MESSAGE);
-                    }
-                    break;
-
-                case 4: // Eliminar Vendedor
-                    String idDeleteStr = JOptionPane.showInputDialog("Introduce el ID del vendedor que deseas eliminar:");
-                    Long idDelete = Long.parseLong(idDeleteStr);
-
-                    try {
-                        vendedoresController.destroy(idDelete);
-                        JOptionPane.showMessageDialog(null, "Vendedor eliminado con éxito.");
-                    } catch (Exception e) {
-                        JOptionPane.showMessageDialog(null, "Error al eliminar vendedor: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-                    }
-                    break;
-
-                case 5: // Salir
-                    salir = true;
-                    JOptionPane.showInputDialog(null, "Regresando al menu Principal!!");
-                    menu();
-                    menu();
-                    break;
-
-                default:
-                    JOptionPane.showMessageDialog(null, "Opción no válida.");
-                    break;
-            }
+            default:
+                JOptionPane.showMessageDialog(null, "Opción no válida. Inténtalo de nuevo.");
+                break;
         }
     }
+}
+
 
 //-----------------------------------------------------CRUD VENTAS-----------------------------------------------------------------    
     public static void create_ventas() {
