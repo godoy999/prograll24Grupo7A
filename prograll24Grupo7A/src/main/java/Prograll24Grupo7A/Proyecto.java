@@ -46,9 +46,9 @@ public class Proyecto {
     static InventarioJpaController inventarioController;
 
     public static void main(String[] args) {
-        //createInventario();
-        //login();
-        menu();
+        
+        login();
+        //menu();
     }
     //------------------------------------------------LOGIN------------------------------------------------------------   
 
@@ -66,10 +66,10 @@ public class Proyecto {
                 opciones,
                 opciones[0]);
         if (seleccion == 0) {
-            iniciarSesion();
+            iniciar_sesion();
             menu();
         } else if (seleccion == 1) {
-            registrarUsuario();
+            registrar_usuario();
             login();
         } else {
             JOptionPane.showMessageDialog(null, "No seleccionaste ninguna opción.");
@@ -85,13 +85,13 @@ public class Proyecto {
             try {
                 String menu = "-------------------------------------------\n"
                         + "Bienvenido a nuestra Empresa de tecnologia \n"
-                        + "1. Desea agregar un producto al inventario \n"
-                        + "2. Desea agregar un vendedor o actualizarlo \n"
-                        + "3. Desea ingresar una venta o consultarla \n"
-                        + "4. Desea Hacer un CRUD a cliente \n"
+                        + "1. Desea Hacer un CRUD al inventario \n"
+                        + "2. Desea Hacer un CRUD al vendedor \n"
+                        + "3. Desea Hacer un CRUD a la venta \n"
+                        + "4. Desea Hacer un CRUD al cliente \n"
                         + "5. Desea Generar la factura \n"
                         + "6. Roles para los usuarios \n"
-                        + "7. Crear un Usuario \n"
+                        + "7. Hacer un CRUD para Usuario \n"
                         + "8. Salir \n"
                         + "-------------------------------------------\n"
                         + "Que opcion desea: ";
@@ -130,20 +130,20 @@ public class Proyecto {
                                 }
                                 switch (opcionInventario) {
                                     case 1:
-                                        createInventario();
+                                        create_inventario();
                                         break;
                                     case 2:
-                                        findInventario();
+                                        find_inventario();
 
                                         break;
                                     case 3:
-                                        updateInventario();
+                                        update_inventario();
                                         break;
                                     case 4:
-                                        deleteInventario();
+                                        delete_inventario();
                                         break;
                                     case 5:
-                                        listInventarios();
+                                        list_inventarios();
                                         break;
                                     case 6:
                                         JOptionPane.showMessageDialog(null, "Regresando al menú principal.");
@@ -165,12 +165,12 @@ public class Proyecto {
                         break;
 
                     case 3:
-//                        create_ventas();
+                        create_ventas();
                         estado = true;
 
                         break;
                     case 4:
-                        create_cliente();
+                        create_menu_cliente();
 
                         break;
                     case 5:
@@ -178,10 +178,10 @@ public class Proyecto {
                         estado = true;
                         break;
                     case 6:
-                        create_rol();
+                        create_menu_rol();
                         break;
                     case 7:
-                        create_usuario();
+                        create_menu_u();
                         break;
                     case 8:
                         JOptionPane.showMessageDialog(null, "Que tengas un Feliz Día!!", "Salir", JOptionPane.INFORMATION_MESSAGE);
@@ -207,29 +207,30 @@ public class Proyecto {
 //------------------------------------------------CRUD CLIENTES------------------------------------------------------------    
     static ClientesJpaController clientesController = new ClientesJpaController();
 
-    public static void create_cliente() {
-        String menuOptions = "1. Crear Cliente\n2. Editar Cliente\n3. Eliminar Cliente\n4. Buscar Cliente\n5. Mostrar Todos los Clientes\n6. Salir";
+    public static void create_menu_cliente() {
+        String menuOptions = "1. Crear Cliente\n2. Editar Cliente\n3. Eliminar Cliente\n4. Buscar Cliente\n5. Mostrar Todos los Clientes\n6. Regresar al Menu Principal";
         int option;
         do {
             option = Integer.parseInt(JOptionPane.showInputDialog(menuOptions));
             switch (option) {
                 case 1:
-                    crearCliente();
+                    crear_cliente();
                     break;
                 case 2:
-                    editarCliente();
+                    editar_cliente();
                     break;
                 case 3:
-                    eliminarCliente();
+                    eliminar_cliente();
                     break;
                 case 4:
-                    buscarCliente();
+                    buscar_cliente();
                     break;
                 case 5:
-                    mostrarClientes();
+                    mostrar_clientes();
                     break;
                 case 6:
-                    JOptionPane.showMessageDialog(null, "Saliendo...");
+                    JOptionPane.showMessageDialog(null, "Regresando al menu");
+                    menu();
                     break;
                 default:
                     JOptionPane.showMessageDialog(null, "Opción inválida");
@@ -238,7 +239,7 @@ public class Proyecto {
     }
 
     // Crear nuevo cliente
-    public static void crearCliente() {
+    public static void crear_cliente() {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.mycompany_prograll24Grupo7A_jar_1.0-SNAPSHOTPU");
         EntityManager em = emf.createEntityManager();
         try {
@@ -261,7 +262,7 @@ public class Proyecto {
     }
 
     // Editar un cliente existente
-    public static void editarCliente() {
+    public static void editar_cliente() {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.mycompany_prograll24Grupo7A_jar_1.0-SNAPSHOTPU");
         EntityManager em = emf.createEntityManager();
         try {
@@ -290,7 +291,7 @@ public class Proyecto {
     }
 
     // Eliminar un cliente
-    public static void eliminarCliente() {
+    public static void eliminar_cliente() {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.mycompany_prograll24Grupo7A_jar_1.0-SNAPSHOTPU");
         EntityManager em = emf.createEntityManager();
         try {
@@ -305,7 +306,7 @@ public class Proyecto {
     }
 
     // Buscar un cliente por ID
-    public static void buscarCliente() {
+    public static void buscar_cliente() {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.mycompany_prograll24Grupo7A_jar_1.0-SNAPSHOTPU");
         EntityManager em = emf.createEntityManager();
         try {
@@ -324,14 +325,25 @@ public class Proyecto {
     }
 
     // Mostrar todos los clientes
-    public static void mostrarClientes() {
+    // Mostrar todos los clientes
+    public static void mostrar_clientes() {
         try {
             List<Clientes> clientes = clientesController.findClientesEntities();
             StringBuilder clientesList = new StringBuilder();
-            for (Clientes cliente : clientes) {
-                clientesList.append(cliente).append("\n");
+
+            if (clientes.isEmpty()) {
+                clientesList.append("No hay clientes registrados");
+            } else {
+                for (Clientes cliente : clientes) {
+                    clientesList.append("ID: ").append(cliente.getIdCliente()).append("\n")
+                            .append("Nombre: ").append(cliente.getNombre()).append("\n")
+                            .append("Correo: ").append(cliente.getCorreo()).append("\n")
+                            .append("Teléfono: ").append(cliente.getTelefono()).append("\n")
+                            .append("---------------------\n");
+                }
             }
-            JOptionPane.showMessageDialog(null, clientesList.length() > 0 ? clientesList.toString() : "No hay clientes registrados");
+
+            JOptionPane.showMessageDialog(null, clientesList.toString());
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Error al mostrar clientes: " + e.getMessage());
         }
@@ -448,7 +460,7 @@ public class Proyecto {
     }
 
     //-----------------------------------------CRUD INVENTARIO------------------------------------------------------------------
-    private static void createInventario() {
+    private static void create_inventario() {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.mycompany_prograll24Grupo7A_jar_1.0-SNAPSHOTPU");
         inventarioController = new InventarioJpaController();  // Corregido
 
@@ -479,7 +491,7 @@ public class Proyecto {
         }
     }
 
-    private static void findInventario() {
+    private static void find_inventario() {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.mycompany_prograll24Grupo7A_jar_1.0-SNAPSHOTPU");
         inventarioController = new InventarioJpaController();
 
@@ -501,7 +513,7 @@ public class Proyecto {
         }
     }
 
-    private static void updateInventario() {
+    private static void update_inventario() {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.mycompany_prograll24Grupo7A_jar_1.0-SNAPSHOTPU");
         inventarioController = new InventarioJpaController();
 
@@ -529,7 +541,7 @@ public class Proyecto {
         }
     }
 
-    private static void deleteInventario() {
+    private static void delete_inventario() {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.mycompany_prograll24Grupo7A_jar_1.0-SNAPSHOTPU");
         inventarioController = new InventarioJpaController();
 
@@ -544,7 +556,7 @@ public class Proyecto {
         }
     }
 
-    private static void listInventarios() {
+    private static void list_inventarios() {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.mycompany_prograll24Grupo7A_jar_1.0-SNAPSHOTPU");
         inventarioController = new InventarioJpaController();
 
@@ -562,195 +574,456 @@ public class Proyecto {
             JOptionPane.showMessageDialog(null, sb.toString());
         }
     }
-
 //----------------------------------------------------CRUD ROL------------------------------------------------------------------------    
-    public static void create_rol() {
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.mycompany_prograll24Grupo7A_jar_1.0-SNAPSHOTPU");
+    private static RolesJpaController rolesController = new RolesJpaController();
 
-        // Instanciar el controlador de Roles
-        RolesJpaController rolesController = new RolesJpaController(emf);
+    public static void create_menu_rol() {
 
-        // Menú del CRUD
-        boolean salir = false;
-        while (!salir) {
-            System.out.println("==== Menú CRUD Roles ====");
-            System.out.println("1. Crear Rol");
-            System.out.println("2. Salir");
-            System.out.print("Seleccione una opción: ");
-            int opcion = entrada.nextInt();
-            entrada.nextLine(); // Consumir la nueva línea
+        boolean continuar = true;
 
-            switch (opcion) {
-                case 1:
-                    // Crear Rol (Create)
-                    System.out.println("Ingrese el nombre del nuevo rol:");
-                    String nombre = entrada.nextLine();
+        while (continuar) {
+            String[] opciones = {"Crear Rol", "Leer Todos", "Actualizar Rol", "Eliminar Rol", "Salir"};
+            String seleccion = (String) JOptionPane.showInputDialog(null, "Seleccione una opción", "CRUD Roles",
+                    JOptionPane.QUESTION_MESSAGE, null, opciones, opciones[0]);
 
-                    // Crear la instancia del objeto Roles
-                    Roles nuevoRol = new Roles();
-                    nuevoRol.setNombre(nombre);
+            if (seleccion == null || seleccion.equals("Salir")) {
+                continuar = false;
+                continue;
+            }
 
-                    // Guardar en la base de datos
-                    rolesController.create(nuevoRol);
-                    System.out.println("Rol creado exitosamente.");
+            switch (seleccion) {
+                case "Crear Rol":
+                    create_rol();
                     break;
-
-                case 2:
-                    // Salir
-                    System.out.println("Saliendo del programa.");
-                    salir = true;
+                case "Leer Todos":
+                    list_roles();
                     break;
-
+                case "Actualizar Rol":
+                    update_rol();
+                    break;
+                case "Eliminar Rol":
+                    delete_rol();
+                    break;
                 default:
-                    System.out.println("Opción inválida. Intente de nuevo.");
+                    JOptionPane.showMessageDialog(null, "Opción no válida.");
+                    break;
             }
         }
+    }
 
-        // Cerrar el EntityManagerFactory
-        emf.close();
-        entrada.close();
+    // Crear nuevo rol
+    public static void create_rol() {
+        String nombre = JOptionPane.showInputDialog("Introduce el nombre del nuevo rol:");
+        if (nombre != null && !nombre.isEmpty()) {
+            Roles nuevoRol = new Roles();
+            nuevoRol.setNombre(nombre);
+
+            try {
+                rolesController.create(nuevoRol);
+                JOptionPane.showMessageDialog(null, "Rol creado con éxito.");
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, "Error al crear el rol: " + e.getMessage());
+            }
+        }
+    }
+
+    // Leer todos los roles
+    public static void list_roles() {
+        List<Roles> rolesList = rolesController.findRolesEntities();
+        if (rolesList.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "No hay roles disponibles.");
+        } else {
+            StringBuilder rolesInfo = new StringBuilder("Lista de Roles:\n");
+            for (Roles rol : rolesList) {
+                rolesInfo.append("ID: ").append(rol.getIdRol())
+                        .append(" - Nombre: ").append(rol.getNombre()).append("\n");
+            }
+            JOptionPane.showMessageDialog(null, rolesInfo.toString());
+        }
+    }
+
+    // Actualizar rol
+    public static void update_rol() {
+        String idStr = JOptionPane.showInputDialog("Introduce el ID del rol a actualizar:");
+        if (idStr != null && !idStr.isEmpty()) {
+            Long id = Long.parseLong(idStr);
+            Roles rol = rolesController.findRol(id);
+
+            if (rol != null) {
+                String nuevoNombre = JOptionPane.showInputDialog("Nuevo nombre para el rol:", rol.getNombre());
+                if (nuevoNombre != null && !nuevoNombre.isEmpty()) {
+                    rol.setNombre(nuevoNombre);
+                    try {
+                        rolesController.edit(rol);
+                        JOptionPane.showMessageDialog(null, "Rol actualizado con éxito.");
+                    } catch (Exception e) {
+                        JOptionPane.showMessageDialog(null, "Error al actualizar el rol: " + e.getMessage());
+                    }
+                }
+            } else {
+                JOptionPane.showMessageDialog(null, "Rol no encontrado.");
+            }
+        }
+    }
+
+    // Eliminar rol
+    public static void delete_rol() {
+        String idStr = JOptionPane.showInputDialog("Introduce el ID del rol a eliminar:");
+        if (idStr != null && !idStr.isEmpty()) {
+            Long id = Long.parseLong(idStr);
+            try {
+                rolesController.destroy(id);
+                JOptionPane.showMessageDialog(null, "Rol eliminado con éxito.");
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, "Error al eliminar el rol: " + e.getMessage());
+            }
+        }
     }
 
 //-----------------------------------------------CRUD USUARIO---------------------------------------------------------------------    
-    public static void create_usuario() {
+    private static EntityManagerFactory emf;
+    private static UsuariosJpaController usuariosController;
+
+    public static void create_menu_u() {
+
         // Crear el EntityManagerFactory 
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.mycompany_prograll24Grupo7A_jar_1.0-SNAPSHOTPU");
-        UsuariosJpaController usuarioController = new UsuariosJpaController(emf);
+        emf = Persistence.createEntityManagerFactory("com.mycompany_prograll24Grupo7A_jar_1.0-SNAPSHOTPU");
+        usuariosController = new UsuariosJpaController(emf);
 
-        // Pedir al usuario que ingrese los datos
-        System.out.println("Ingrese el nombre del usuario:");
-        String nombre = entrada.nextLine();
-        entrada.nextLine();
+        boolean continuar = true;
+        while (continuar) {
+            String[] opciones = {"Crear", "Leer", "Actualizar", "Eliminar", "Salir"};
+            int seleccion = JOptionPane.showOptionDialog(null, "Seleccione una operación", "CRUD Usuarios",
+                    JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, opciones, opciones[0]);
 
-        System.out.println("Ingrese el correo del usuario:");
-        String correo = entrada.nextLine();
+            switch (seleccion) {
+                case 1:
+                    create_usuario();
+                    break;
+                case 2:
+                    list_usuarios();
+                    break;
+                case 3:
+                    update_usuario();
+                    break;
+                case 4:
+                    delete_usuario();
+                    break;
+                case 5:
+                    continuar = false;
+                    JOptionPane.showInputDialog(null, "Regresando al menu Principal!!");
+                    menu();
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
 
-        System.out.println("Ingrese la contraseña del usuario:");
-        String password = entrada.nextLine();
-        entrada.nextLine();
-
-        System.out.println("Ingrese el ID del rol:");
-        Long rolId = entrada.nextLong();
-
-        // Crear el nuevo usuario
-        Usuarios nuevoUsuario = new Usuarios();
-        nuevoUsuario.setNombre(nombre);
-        nuevoUsuario.setCorreo(correo);
-        nuevoUsuario.setPassword(password);
-
-        // Asignar el rol (deberías tener una instancia de la entidad Roles)
-        Roles rol = new Roles();
-        rol.setIdRol(rolId); // Asegúrate de que el ID del rol existe en la base de datos
-        nuevoUsuario.setRol(rol);
-
+    // Método para crear un usuario
+    private static void create_usuario() {
         try {
-            // Intentar crear el nuevo usuario en la base de datos
-            usuarioController.create(nuevoUsuario);
-            System.out.println("Usuario creado exitosamente.");
+            String nombre = JOptionPane.showInputDialog(null, "Ingrese el nombre del usuario:");
+            String correo = JOptionPane.showInputDialog(null, "Ingrese el correo del usuario:");
+            String password = JOptionPane.showInputDialog(null, "Ingrese la contraseña del usuario:");
+
+            // Crear una instancia de usuario
+            Usuarios usuario = new Usuarios();
+            usuario.setNombre(nombre);
+            usuario.setCorreo(correo);
+            usuario.setPassword(password);
+
+            // Asignar un rol (puedes modificar este paso para asignar roles válidos)
+            Roles rol = new Roles();
+            rol.setIdRol(1L); // Asignar un ID de rol válido
+            usuario.setRol(rol);
+
+            usuariosController.create(usuario);
+            JOptionPane.showMessageDialog(null, "Usuario creado con éxito");
         } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("Error al crear el usuario: " + e.getMessage());
-        } finally {
-            // Cerrar EntityManagerFactory
-            emf.close();
-            entrada.close();
+            JOptionPane.showMessageDialog(null, "Error al crear usuario: " + e.getMessage());
+        }
+    }
+
+    // Método para leer todos los usuarios
+    private static void list_usuarios() {
+        List<Usuarios> usuarios = usuariosController.findUsuariosEntities();
+        StringBuilder usuariosList = new StringBuilder("Lista de Usuarios:\n");
+
+        for (Usuarios usuario : usuarios) {
+            usuariosList.append("ID: ").append(usuario.getIdUsuario())
+                    .append(", Nombre: ").append(usuario.getNombre())
+                    .append(", Correo: ").append(usuario.getCorreo())
+                    .append("\n");
+        }
+
+        JOptionPane.showMessageDialog(null, usuariosList.toString());
+    }
+
+    // Método para actualizar un usuario
+    private static void update_usuario() {
+        try {
+            Long id = Long.parseLong(JOptionPane.showInputDialog(null, "Ingrese el ID del usuario a actualizar:"));
+            Usuarios usuario = usuariosController.findUsuario(id);
+
+            if (usuario != null) {
+                String nuevoNombre = JOptionPane.showInputDialog(null, "Ingrese el nuevo nombre del usuario:", usuario.getNombre());
+                String nuevoCorreo = JOptionPane.showInputDialog(null, "Ingrese el nuevo correo del usuario:", usuario.getCorreo());
+                String nuevaPassword = JOptionPane.showInputDialog(null, "Ingrese la nueva contraseña del usuario:");
+
+                usuario.setNombre(nuevoNombre);
+                usuario.setCorreo(nuevoCorreo);
+                usuario.setPassword(nuevaPassword);
+
+                usuariosController.edit(usuario);
+                JOptionPane.showMessageDialog(null, "Usuario actualizado con éxito");
+            } else {
+                JOptionPane.showMessageDialog(null, "Usuario no encontrado");
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error al actualizar usuario: " + e.getMessage());
+        }
+    }
+
+    // Método para eliminar un usuario
+    private static void delete_usuario() {
+        try {
+            Long id = Long.parseLong(JOptionPane.showInputDialog(null, "Ingrese el ID del usuario a eliminar:"));
+            usuariosController.destroy(id);
+            JOptionPane.showMessageDialog(null, "Usuario eliminado con éxito");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error al eliminar usuario: " + e.getMessage());
         }
 
     }
 //-----------------------------------------------------------------CRUD VENDEDORES---------------------------------------------------    
 
-public static void create_vendedores() {
-    EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.mycompany_prograll24Grupo7A_jar_1.0-SNAPSHOTPU");
-    VendedoresJpaController vendedoresController = new VendedoresJpaController();
+    public static void create_vendedores() {
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.mycompany_prograll24Grupo7A_jar_1.0-SNAPSHOTPU");
+        VendedoresJpaController vendedoresController = new VendedoresJpaController();
 
-    // Menú de opciones
-    boolean salir = false;
-    while (!salir) {
-        String[] options = {"Crear nuevo Vendedor", "Ver todos los Vendedores", "Actualizar Vendedor", "Eliminar Vendedor", "Salir"};
-        int opcion = JOptionPane.showOptionDialog(null, "Selecciona una opción", "Menú CRUD Vendedores",
-                JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+        // Menú de opciones
+        boolean salir = false;
+        while (!salir) {
+            String[] options = {"Crear nuevo Vendedor", "Ver todos los Vendedores", "Actualizar Vendedor", "Eliminar Vendedor", "Salir"};
+            int opcion = JOptionPane.showOptionDialog(null, "Selecciona una opción", "Menú CRUD Vendedores",
+                    JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
 
-        switch (opcion) {
-            case 0: // Crear nuevo Vendedor
-                String nombre = JOptionPane.showInputDialog("Introduce el nombre del vendedor:");
-                String correo = JOptionPane.showInputDialog("Introduce el correo del vendedor:");
+            switch (opcion) {
+                case 1: // Crear nuevo Vendedor
+                    String nombre = JOptionPane.showInputDialog("Introduce el nombre del vendedor:");
+                    String correo = JOptionPane.showInputDialog("Introduce el correo del vendedor:");
 
-                Vendedores nuevoVendedor = new Vendedores();
-                nuevoVendedor.setNombre(nombre);
-                nuevoVendedor.setCorreo(correo);
+                    Vendedores nuevoVendedor = new Vendedores();
+                    nuevoVendedor.setNombre(nombre);
+                    nuevoVendedor.setCorreo(correo);
 
-                // Guardar el vendedor en la base de datos
-                try {
-                    vendedoresController.create(nuevoVendedor);
-                    JOptionPane.showMessageDialog(null, "Vendedor creado con éxito.");
-                } catch (Exception e) {
-                    JOptionPane.showMessageDialog(null, "Error al crear vendedor: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-                }
-                break;
+                    // Guardar el vendedor en la base de datos
+                    try {
+                        vendedoresController.create(nuevoVendedor);
+                        JOptionPane.showMessageDialog(null, "Vendedor creado con éxito.");
+                    } catch (Exception e) {
+                        JOptionPane.showMessageDialog(null, "Error al crear vendedor: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                    break;
 
-            case 1: // Ver todos los Vendedores
-                StringBuilder vendedoresList = new StringBuilder("---- Lista de Vendedores ----\n");
-                for (Vendedores v : vendedoresController.findVendedoresEntities()) {
-                    vendedoresList.append("ID: ").append(v.getIdVendedores()).append(" - Nombre: ")
-                            .append(v.getNombre()).append(" - Correo: ").append(v.getCorreo()).append("\n");
-                }
-                JOptionPane.showMessageDialog(null, vendedoresList.toString());
-                break;
+                case 2: // Ver todos los Vendedores
+                    StringBuilder vendedoresList = new StringBuilder("---- Lista de Vendedores ----\n");
+                    for (Vendedores v : vendedoresController.findVendedoresEntities()) {
+                        vendedoresList.append("ID: ").append(v.getIdVendedores()).append(" - Nombre: ")
+                                .append(v.getNombre()).append(" - Correo: ").append(v.getCorreo()).append("\n");
+                    }
+                    JOptionPane.showMessageDialog(null, vendedoresList.toString());
+                    break;
 
-            case 2: // Actualizar Vendedor
-                String idUpdateStr = JOptionPane.showInputDialog("Introduce el ID del vendedor que deseas actualizar:");
-                Long idUpdate = Long.parseLong(idUpdateStr);
+                case 3: // Actualizar Vendedor
+                    String idUpdateStr = JOptionPane.showInputDialog("Introduce el ID del vendedor que deseas actualizar:");
+                    Long idUpdate = Long.parseLong(idUpdateStr);
 
-                Vendedores vendedorActualizar = vendedoresController.findVendedor(idUpdate);
-                if (vendedorActualizar != null) {
-                    String nuevoNombre = JOptionPane.showInputDialog("Nuevo nombre:", vendedorActualizar.getNombre());
-                    String nuevoCorreo = JOptionPane.showInputDialog("Nuevo correo:", vendedorActualizar.getCorreo());
+                    Vendedores vendedorActualizar = vendedoresController.findVendedor(idUpdate);
+                    if (vendedorActualizar != null) {
+                        String nuevoNombre = JOptionPane.showInputDialog("Nuevo nombre:", vendedorActualizar.getNombre());
+                        String nuevoCorreo = JOptionPane.showInputDialog("Nuevo correo:", vendedorActualizar.getCorreo());
 
-                    vendedorActualizar.setNombre(nuevoNombre);
-                    vendedorActualizar.setCorreo(nuevoCorreo);
+                        vendedorActualizar.setNombre(nuevoNombre);
+                        vendedorActualizar.setCorreo(nuevoCorreo);
+
+                        try {
+                            vendedoresController.edit(vendedorActualizar);
+                            JOptionPane.showMessageDialog(null, "Vendedor actualizado con éxito.");
+                        } catch (Exception e) {
+                            JOptionPane.showMessageDialog(null, "Error al actualizar vendedor: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                        }
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Vendedor no encontrado.", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                    break;
+
+                case 4: // Eliminar Vendedor
+                    String idDeleteStr = JOptionPane.showInputDialog("Introduce el ID del vendedor que deseas eliminar:");
+                    Long idDelete = Long.parseLong(idDeleteStr);
 
                     try {
-                        vendedoresController.edit(vendedorActualizar);
-                        JOptionPane.showMessageDialog(null, "Vendedor actualizado con éxito.");
+                        vendedoresController.destroy(idDelete);
+                        JOptionPane.showMessageDialog(null, "Vendedor eliminado con éxito.");
                     } catch (Exception e) {
-                        JOptionPane.showMessageDialog(null, "Error al actualizar vendedor: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(null, "Error al eliminar vendedor: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                     }
-                } else {
-                    JOptionPane.showMessageDialog(null, "Vendedor no encontrado.", "Error", JOptionPane.ERROR_MESSAGE);
-                }
-                break;
+                    break;
 
-            case 3: // Eliminar Vendedor
-                String idDeleteStr = JOptionPane.showInputDialog("Introduce el ID del vendedor que deseas eliminar:");
-                Long idDelete = Long.parseLong(idDeleteStr);
+                case 5: // Salir
+                    salir = true;
+                    JOptionPane.showInputDialog(null, "Regresando al menu Principal!!");
+                    menu();
+                    menu();
+                    break;
 
-                try {
-                    vendedoresController.destroy(idDelete);
-                    JOptionPane.showMessageDialog(null, "Vendedor eliminado con éxito.");
-                } catch (Exception e) {
-                    JOptionPane.showMessageDialog(null, "Error al eliminar vendedor: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-                }
-                break;
-
-            case 4: // Salir
-                salir = true;
-                break;
-
-            default:
-                JOptionPane.showMessageDialog(null, "Opción no válida.");
-                break;
+                default:
+                    JOptionPane.showMessageDialog(null, "Opción no válida.");
+                    break;
+            }
         }
     }
-}
-
 
 //-----------------------------------------------------CRUD VENTAS-----------------------------------------------------------------    
-    static VentasJpaController ventasController = new VentasJpaController();
-    
-    
+    public static void create_ventas() {
+        String menuOptions = "1. Crear Venta\n2. Mostrar Ventas\n3. Actualizar Ventas\n4. Eliminar Ventas\n5.Salir";
+        int option;
+        do {
+            option = Integer.parseInt(JOptionPane.showInputDialog(menuOptions));
+            switch (option) {
+                case 1:
+                    crear();
+                    break;
+                case 2:
+                    read_ventas();
+                    break;
+                case 3:
+                    update_ventas();
+                    break;
+                case 4:
+                    delete_ventas();
+                    break;
+                case 5:
+                    JOptionPane.showMessageDialog(null, "Regresando al menu Principal!!");
+                    menu();
+                    break;
+                default:
+                    JOptionPane.showMessageDialog(null, "Opción inválida");
+            }
+        } while (option != 6);
+    }
+
+    public static void crear() {
+        VentasJpaController ventasController = new VentasJpaController();
+
+        try {
+            // Solicitar datos para la venta
+            String cantidadStr = JOptionPane.showInputDialog(null, "Introduce la cantidad:", "Crear Venta", JOptionPane.QUESTION_MESSAGE);
+            int cantidad = Integer.parseInt(cantidadStr);
+
+            String precioStr = JOptionPane.showInputDialog(null, "Introduce el precio:", "Crear Venta", JOptionPane.QUESTION_MESSAGE);
+            BigDecimal precio = new BigDecimal(precioStr);
+
+            String idFacturaStr = JOptionPane.showInputDialog(null, "Introduce el ID de la factura:", "Crear Venta", JOptionPane.QUESTION_MESSAGE);
+            Long idFactura = Long.parseLong(idFacturaStr);
+
+            String idInventarioStr = JOptionPane.showInputDialog(null, "Introduce el ID del producto (Inventario):", "Crear Venta", JOptionPane.QUESTION_MESSAGE);
+            Long idInventario = Long.parseLong(idInventarioStr);
+
+            // Crear instancia de Ventas
+            Ventas venta = new Ventas();
+            venta.setCantidad(cantidad);
+            venta.setPrecio(precio);
+
+            // Asignar Factura e Inventario
+            Factura factura = new Factura();
+            factura.setIdFactura(idFactura);
+            venta.setFacturaId(factura);
+
+            Inventario inventario = new Inventario();
+            inventario.setIdInventario(idInventario);
+            venta.setProductoId(inventario);
+
+            // Guardar la venta
+            ventasController.create(venta);
+            JOptionPane.showMessageDialog(null, "Venta creada con éxito.");
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error al crear la venta: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    public static void read_ventas() {
+        VentasJpaController ventasController = new VentasJpaController();
+
+        List<Ventas> listaVentas = ventasController.findVentasEntities();
+
+        if (listaVentas.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "No hay ventas registradas.", "Leer Ventas", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            StringBuilder sb = new StringBuilder();
+            for (Ventas v : listaVentas) {
+                sb.append("ID: ").append(v.getIdVentas())
+                        .append(", Cantidad: ").append(v.getCantidad())
+                        .append(", Precio: ").append(v.getPrecio())
+                        .append("\n");
+            }
+            JOptionPane.showMessageDialog(null, sb.toString(), "Lista de Ventas", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+
+    public static void update_ventas() {
+        VentasJpaController ventasController = new VentasJpaController();
+
+        try {
+            // Solicitar el ID de la venta a actualizar
+            String idVentasStr = JOptionPane.showInputDialog(null, "Introduce el ID de la venta a actualizar:", "Actualizar Venta", JOptionPane.QUESTION_MESSAGE);
+            Long idVentas = Long.parseLong(idVentasStr);
+
+            Ventas venta = ventasController.findVentas(idVentas);
+
+            if (venta != null) {
+                // Actualizar datos
+                String nuevaCantidadStr = JOptionPane.showInputDialog(null, "Introduce la nueva cantidad:", "Actualizar Venta", JOptionPane.QUESTION_MESSAGE);
+                int nuevaCantidad = Integer.parseInt(nuevaCantidadStr);
+
+                String nuevoPrecioStr = JOptionPane.showInputDialog(null, "Introduce el nuevo precio:", "Actualizar Venta", JOptionPane.QUESTION_MESSAGE);
+                BigDecimal nuevoPrecio = new BigDecimal(nuevoPrecioStr);
+
+                venta.setCantidad(nuevaCantidad);
+                venta.setPrecio(nuevoPrecio);
+
+                ventasController.edit(venta);
+                JOptionPane.showMessageDialog(null, "Venta actualizada con éxito.");
+
+            } else {
+                JOptionPane.showMessageDialog(null, "Venta no encontrada.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error al actualizar la venta: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    public static void delete_ventas() {
+        VentasJpaController ventasController = new VentasJpaController();
+
+        try {
+            // Solicitar el ID de la venta a eliminar
+            String idVentasStr = JOptionPane.showInputDialog(null, "Introduce el ID de la venta a eliminar:", "Eliminar Venta", JOptionPane.QUESTION_MESSAGE);
+            Long idVentas = Long.parseLong(idVentasStr);
+
+            ventasController.destroy(idVentas);
+            JOptionPane.showMessageDialog(null, "Venta eliminada con éxito.");
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error al eliminar la venta: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
 
     /* -------------- INICIAR SESION -------------- */
-    public static void iniciarSesion() {
+    public static void iniciar_sesion() {
         JTextField usuarioField = new JTextField();
         JTextField contrasenaField = new JPasswordField();
 
@@ -784,7 +1057,7 @@ public static void create_vendedores() {
     }
 
     /* ----------------- REGISTRAR USUARIO -----------------*/
-    public static void registrarUsuario() {
+    public static void registrar_usuario() {
         JPanel panel = new JPanel();
         JTextField nombreField = new JTextField(20);
         JTextField correoField = new JTextField(20);
@@ -818,7 +1091,7 @@ public static void create_vendedores() {
             EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.mycompany_prograll24Grupo7A_jar_1.0-SNAPSHOTPU");
             RolesJpaController rolesJpaController = new RolesJpaController(emf);
 
-            // Busca el rol en la base de datos (por ejemplo, el rol con ID 1)
+            // Busca el rol en la base de datos
             Roles rol = rolesJpaController.findRol(1L);
 
             if (rol != null) {
@@ -838,4 +1111,5 @@ public static void create_vendedores() {
             emf.close();
         }
     }
+
 }
