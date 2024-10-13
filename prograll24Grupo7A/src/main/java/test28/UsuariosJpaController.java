@@ -1,5 +1,7 @@
 package test28;
 
+
+
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.EntityManager;

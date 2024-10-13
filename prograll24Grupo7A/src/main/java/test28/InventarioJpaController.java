@@ -8,6 +8,8 @@ import java.util.List;
 
 public class InventarioJpaController {
 
+    
+    
     private EntityManagerFactory emf = null;
 
     public InventarioJpaController() {

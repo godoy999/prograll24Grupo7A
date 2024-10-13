@@ -13,8 +13,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
-import java.util.Scanner;
-import javax.persistence.EntityNotFoundException;
+
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
@@ -36,19 +35,17 @@ import test28.Vendedores;
 import test28.VendedoresJpaController;
 import test28.Ventas;
 import test28.VentasJpaController;
-import static test28.Ventas_.precio;
-import test28.exceptions.NonexistentEntityException;
 
 public class Proyecto {
 
-    static Scanner entrada = new Scanner(System.in);
+    //static Scanner entrada = new Scanner(System.in);
     static boolean estado = true;
     static InventarioJpaController inventarioController;
 
     public static void main(String[] args) {
         
-        //login();
-        menu();
+        login();
+       // menu();
     }
     //------------------------------------------------LOGIN------------------------------------------------------------   
 
@@ -626,7 +623,7 @@ public class Proyecto {
                     break;
             }
         } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(null, "Por favor ingrese un número válido.");
+            JOptionPane.showMessageDialog(null, "Entrada no válida. Por favor, ingrese un número.");
         }
     }
 }

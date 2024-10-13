@@ -4,6 +4,8 @@
  */
 package test28;
 
+
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import javax.persistence.Basic;
